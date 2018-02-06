@@ -1,6 +1,7 @@
 """Models and database function for Flickrgram project"""
 
 from flask_sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
@@ -10,16 +11,16 @@ class User(db.Model):
 
     def __repr__(self):
         """Provide helpful representation when printed."""
-        return "<User user_id={} username={} realname{} user_location={} photo_count={}> photo_since={} profile_url={}"
-        .format(self.user_id, self.username, self.realname, self.user_location
-        self.photo_count, self.photo_since, self.profile_url)
+        return "<User user_id={} username={} realname{} user_location={} photo_count={} photo_since={} profile_url={}>".format(self.user_id, 
+            self.username, self.realname, self.user_location, 
+            self.photo_count, self.photo_since, self.profile_url)
 
     user_id = db.Column(db.String(20), primary_key=True)
     username = db.Column(db.String(50), nullable=False)
     realname = db.Column(db.String(50))
     user_location = db.Column(db.String(50))
     photo_count = db.Column(db.Integer, nullable=False)
-    photo_since = db.Column(db.Datetime)
+    photo_since = db.Column(db.DateTime)
     profile_url = db.Column(db.String(200), nullable=False)
 
 
@@ -29,8 +30,8 @@ class Photo(db.Model):
 
     def __repr__(self):
         """Provide helpful representation when printed."""
-        return "<Photo photo_id={} user_id={} title{} tags={} description={} date_posted={} date_taken={} country={} place_id={} lat={} lon={}>"
-        .format(self.photo_id, self.user_id, self.title, self.tags, self.description,
+        return "<Photo photo_id={} user_id={} title{} tags={} description={} date_posted={} date_taken={} country={} place_id={} lat={} lon={}>".format(self.photo_id, 
+            self.user_id, self.title, self.tags, self.description,
             self.date_posted, self.date_taken, self.country, self.place_id,
             self.lat, self.lon)
 
@@ -39,8 +40,8 @@ class Photo(db.Model):
     title = db.Column(db.String(100))
     tags = db.Column(db.String())
     description = db.Column(db.String())
-    date_posted = dbColumn(db.Datetime, nullable=False)
-    date_taten = db.Column(db.Datetime)
+    date_posted = db.Column(db.DateTime, nullable=False)
+    date_taten = db.Column(db.DateTime)
     country = db.Column(db.String(20))
     place_id = db.Column(db.String(30))
     lat = db.Column(db.String(15))
