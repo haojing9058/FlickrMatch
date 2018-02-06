@@ -4,19 +4,34 @@ from pprint import pprint
 import os
 # global variable
 API_KEY = os.environ['API_KEY']
-# API_KEY = "bb72104f20be45b61f672cfa885c1b4a"
-#put this into secret file later
-
 API_URL = "https://api.flickr.com/services/rest"
 RESPONSE_FORMAT = 'json&nojsoncallback=1'
 
 # helper function for creating request
+def get_req_base():
+    return "%s?api_key=%s&format=%s"%(API_URL, API_KEY, RESPONSE_FORMAT)
+
+def base_params():
+    return {
+            'api_key': API_KEY,
+            'format': 'json',
+            'nojsoncallback': '1',
+        }
+# QUESTIONS: 
+# 1. Make OO
+# 2. try...except...
+
+# class User(object):
+#     """A user."""
+
 
 def get_id_by_username (username):
     """get user_id from Flickr given a username"""
-    req = "%s?api_key=%s&format=%s&method=%s&username=%s"%(API_URL, API_KEY, RESPONSE_FORMAT,
-     "flickr.people.findByUsername", username)
-    response = requests.get(req).json()
+
+    params = base_params()
+    params['method'] = "flickr.people.findByUsername"
+    params['username'] = username
+    response = requests.get(API_URL, params=params).json()
     user_id = response['user']['nsid']
     return user_id
 
@@ -25,14 +40,16 @@ def get_userinfo_by_userid (user_id):
     """get user's info from Flickr given a user_id
     user's info: realname, user_location, photo_count, profile_url, first_date
     """
-    req = "%s?api_key=%s&format=%s&method=%s&user_id=%s"%(API_URL, API_KEY, RESPONSE_FORMAT,
-     "flickr.people.getInfo", user_id)
-    response = requests.get(req).json()
+
+    params = base_params()
+    params['method'] = "flickr.people.getInfo"
+    params['user_id'] = user_id
+    response = requests.get(API_URL, params=params).json()
     realname = response['person']['realname']['_content']
     user_location = response['person']['location']['_content']
     photo_count = response['person']['photos']['count']['_content']
     profile_url = response['person']['profileurl']['_content']
-    first_date = response['person']['photos']['firstdate']['_content']
+    photo_since = response['person']['photos']['firstdate']['_content']
 
 
 def get_popular_photos_by_userid(user_id, sort='interesting', per_page=9):
@@ -41,13 +58,20 @@ def get_popular_photos_by_userid(user_id, sort='interesting', per_page=9):
     sort: The sort order. One of faves, views, comments or interesting. Deafults to interesting.
     per_page: Number of photos to return per page. The maximum allowed value is 500
     """
-    req = "%s?api_key=%s&format=%s&method=%s&user_id=%s&sort=%s&per_page=%s"%(API_URL, 
-        API_KEY, RESPONSE_FORMAT,"flickr.photos.getPopular", user_id, sort, per_page)
 
-    response = requests.get(req).json()
+    params = base_params()
+    params['method'] = "flickr.photos.getPopular"
+    params['user_id'] = user_id
+    params['sort'] = sort
+    params['per_page'] = per_page
+    response = requests.get(API_URL, params=params).json()
 
-    # return a list of photos (photo_id, user_id) 
-    # - Best nine to be displayed on webpage.
+    # return a list of photos (photo_id) 
+    photo_id_ls = []
+    for i in response['photos']['photo']:
+        photo_id_ls.append(i['id'])
+
+    # Best nine to be displayed on webpage, more for text processing.
 
 
 def get_photoinfo_by_photoid(photo_id):
@@ -55,9 +79,10 @@ def get_photoinfo_by_photoid(photo_id):
     req = "%s?api_key=%s&format=%s&method=%s&photo_id=%s"%(API_URL, API_KEY, RESPONSE_FORMAT,
      "flickr.photos.getInfo", photo_id)
 
-    response = requests.get(req).json()
-
-    return response
+    params = base_params()
+    params['method'] = "flickr.photos.getInfo"
+    params['photo_id'] = photo_id
+    response = requests.get(API_URL, params=params).json()
 
     user_id = response['photo']['owner']['nsid']
     description = response['photo']['description']['_content']
