@@ -4,6 +4,7 @@ from pprint import pprint
 import os
 from model import User, Photo
 from model import connect_to_db, db
+import datetime
 
 # global variable
 API_KEY = os.environ['API_KEY']
@@ -22,51 +23,38 @@ def base_params():
         }
 
 
-# def get_user_id_by_username (username):
-#     """Get user_id from Flickr given a username"""
-
-#     params = base_params()
-#     params['method'] = "flickr.people.findByUsername"
-#     params['username'] = username
-#     response = requests.get(API_URL, params=params).json()
-#     user_id = response['user']['nsid']
-#     return user_id
-
-
-# def get_userinfo_by_userid (user_id):
-#     """Get user's info from Flickr given a user_id."""
-
-def get_userinfo_by_username (username):
+def get_user_by_username (username):
     """Get a user's info from Flickr given a username"""
 
     # Get Flickr user_id from Flickr given a username.
-    params1 = base_params()
-    params1['method'] = "flickr.people.findByUsername"
-    params1['username'] = username
-    response1 = requests.get(API_URL, params=params1).json()
-    user_id = response1['user']['nsid']
+    params_find_by_username = base_params()
+    params_find_by_username['method'] = "flickr.people.findByUsername"
+    params_find_by_username['username'] = username
+    response_username = requests.get(API_URL, params=params_find_by_username).json()
+    user_id = response_username['user']['nsid']
 
     # Get the user's info given the Flickr user_id
-    params2 = base_params()
-    params2['method'] = "flickr.people.getInfo"
-    params2['user_id'] = user_id
-    response2 = requests.get(API_URL, params=params2).json()
+    params_get_user_info = base_params()
+    params_get_user_info['method'] = "flickr.people.getInfo"
+    params_get_user_info['user_id'] = user_id
+    response_userinfo = requests.get(API_URL, params=params_get_user_info).json()
 
-    person = response2['person']
+    person = response_userinfo['person']
     photos = person['photos']
 
-    realname = person['realname']['_content']
+    # realname = person['realname']['_content']
     user_location = person['location']['_content']
     photo_count = photos['count']['_content']
-    photo_since = photos['firstdate']['_content']
+    photo_since = datetime.datetime.fromtimestamp(int(photos['firstdate']['_content'])).strftime('%Y-%m-%d %H:%M:%S')
+
     profile_url = person['profileurl']['_content']
 
-    return User(user_id=user_id, username=username, realname=realname,
-        user_location=user_location, photo_count=photo_count, photo_since=photo_since,
+    return User(user_id=user_id, username=username, user_location=user_location, 
+        photo_count=photo_count, photo_since=photo_since,
         profile_url=profile_url)
 
 
-def get_popular_photos_by_userid(user_id, sort='interesting', per_page=9):
+def get_photos_by_userid(user_id, sort='interesting', per_page=9):
     """
     Get the most popular photos given a user_id.
     sort: One of faves, views, comments or interesting. Deafults to interesting.
@@ -89,7 +77,7 @@ def get_popular_photos_by_userid(user_id, sort='interesting', per_page=9):
     # Best nine to be displayed on webpage, more for text processing.
 
 
-def get_photoinfo_by_photoid(photo_id):
+def get_photo_by_photoid(photo_id):
     """return the photo info givin photo_id"""
 
     params = base_params()
@@ -97,28 +85,43 @@ def get_photoinfo_by_photoid(photo_id):
     params['photo_id'] = photo_id
     response = requests.get(API_URL, params=params).json()
 
-    user_id = response['photo']['owner']['nsid']
-    description = response['photo']['description']['_content']
-    title = response['photo']['title']['_content']
+    photo = response['photo']
+    user_id = photo['owner']['nsid']
+    title = photo['title']['_content']
+    description = photo['description']['_content']
     tags = []
     #use raw_tag or tag? 
-    for i in response['photo']['tags']['tag']:
+    for i in photo['tags']['tag']:
         # tags.append(i['raw'])
         tags.append(i['_content'])
 
-    date_posted = response['photo']['dates']['posted']
-    date_taken = response['photo']['dates']['taken']
+    date = photo['dates']
+    #fix the datetime format
+    date_posted = datetime.datetime.fromtimestamp(int(date['posted'])).strftime('%Y-%m-%d %H:%M:%S')
+    # date_posted = date['posted']
+    date_taken = date['taken']
 
     #geographic
-    country = response['photo']['location']['country']['_content']
-    place_id = response['photo']['location']['place_id']
-    latitude = response['photo']['location']['latitude']
-    longitude = response['photo']['location']['longitude']
+    if photo.get('location'):
+        location = photo['location']
+        country = location['country']['_content']
+        place_id = location['place_id']
+        lat = location['latitude']
+        lon = location['longitude']
+    else:
+        country = None
+        place_id = None
+        lat = None
+        lon = None
 
     urls = []
     for url in response['photo']['urls']['url']:
         urls.append(url['_content'])
 
+    return Photo(photo_id=photo_id, user_id=user_id, title=title, 
+        description=description, tags=tags, date_posted=date_posted,
+        date_taken=date_taken, country=country, place_id=place_id,
+        lat=lat, lon=lon, urls=urls)
 
 
 

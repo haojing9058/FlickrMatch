@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block content %}
+
+
+
+<h2><a href={{ user1.profile_url }}>{{ user1.username }}</a></h2>
+
+<p>Location: {{ user1.user_location }}</p> <br>
+<p>Photo Counts: {{ user1.photo_count }}</p> <br>
+<p>Photo Since: {{ user1.photo_since }}</p> <br>
+
+
+<h2><a href={{ user2.profile_url }}>{{ user2.username }}</a></h2>
+
+<p>Location: {{ user2.user_location }}</p> <br>
+<p>Photo Counts: {{ user2.photo_count }}</p> <br>
+<p>Photo Since: {{ user2.photo_since }}</p> <br>
+
+{% endblock %}
