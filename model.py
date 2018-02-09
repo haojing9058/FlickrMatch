@@ -29,10 +29,10 @@ class Photo(db.Model):
 
     def __repr__(self):
         """Provide helpful representation when printed."""
-        return "<Photo photo_id={} user_id={} title={} tags={} description={} date_posted={} date_taken={} country={} place_id={} lat={} lon={}>".format(self.photo_id, 
+        return "<Photo photo_id={} user_id={} title={} tags={} description={} date_posted={} date_taken={} country={} place_id={} lat={} lon={} url={} img_url={}>".format(self.photo_id, 
             self.user_id, self.title, self.tags, self.description,
             self.date_posted, self.date_taken, self.country, self.place_id,
-            self.lat, self.lon)
+            self.lat, self.lon, self.url, self.img_url)
 
     photo_id = db.Column(db.String(20), primary_key=True)
     user_id = db.Column(db.String(20), db.ForeignKey('users.user_id'))
@@ -45,7 +45,8 @@ class Photo(db.Model):
     place_id = db.Column(db.String(30))
     lat = db.Column(db.String(15))
     lon = db.Column(db.String(15))
-    urls = db.Column(db.String(), nullable=False)
+    url = db.Column(db.String(200), nullable=False)
+    img_url = db.Column(db.String(200), nullable=False)
 
     users = db.relationship('User', backref=db.backref('photos'))
 

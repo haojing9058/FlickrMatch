@@ -20,15 +20,42 @@ def display_userinfo():
     name1 = request.form.get('username1')
     name2 = request.form.get('username2')
 
+    #request User() from Flickr api
     user1 = request_api.get_user_by_username(name1)
     user2 = request_api.get_user_by_username(name2)
-    
+
+    #add user into db
     db_utils.create_user(user1)
     db_utils.create_user(user2)
 
+    #obtain best_nine photos id for each user
+    photo_ids_1 = request_api.get_photos_by_userid(user1.user_id)
+    photo_ids_2 = request_api.get_photos_by_userid(user2.user_id)
+
+    # obtain best_nine photo_urls for each user
+    photos1_urls = []
+    for photo_id in photo_ids_1:
+        photo = request_api.get_photo_by_photoid(photo_id)
+        db_utils.add_photo(photo)
+        img_url = photo.img_url
+        photos1_urls.append(img_url)
+
+    photos2_urls = []
+    for photo_id in photo_ids_2:
+        photo = request_api.get_photo_by_photoid(photo_id)
+        db_utils.add_photo(photo)
+        img_url = photo.img_url
+        photos2_urls.append(img_url)
+
+
     return render_template('userinfo.html', 
                             user1 = user1,
-                            user2 = user2)
+                            user2 = user2,
+                            photos1_urls = photos1_urls,
+                            photos2_urls = photos2_urls)
+
+
+# @app.route('/bestnine', methods)
 
 
 if __name__ == "__main__":

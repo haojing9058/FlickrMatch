@@ -86,7 +86,13 @@ def get_photo_by_photoid(photo_id):
     response = requests.get(API_URL, params=params).json()
 
     photo = response['photo']
-    user_id = photo['owner']['nsid']
+
+    secret_id = photo['secret']
+    server_id = photo['server']
+    farm_id = photo['farm']
+    img_url = 'https://farm' + str(farm_id) + '.staticflickr.com/' + server_id + '/' + photo_id + '_' + secret_id + '_s.jpg'
+
+    user_id = photo['owner']['nsid']    
     title = photo['title']['_content']
     description = photo['description']['_content']
     tags = []
@@ -114,14 +120,14 @@ def get_photo_by_photoid(photo_id):
         lat = None
         lon = None
 
-    urls = []
-    for url in response['photo']['urls']['url']:
-        urls.append(url['_content'])
+    url = photo['urls']['url'][0]['_content'].encode('utf-8')
+    #type = photo['urls']['url'][0]['type']
+    #'photopage'
 
     return Photo(photo_id=photo_id, user_id=user_id, title=title, 
         description=description, tags=tags, date_posted=date_posted,
         date_taken=date_taken, country=country, place_id=place_id,
-        lat=lat, lon=lon, urls=urls)
+        lat=lat, lon=lon, url=url, img_url=img_url)
 
 
 

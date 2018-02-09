@@ -5,12 +5,13 @@ from model import connect_to_db, db, User, Photo
 # from datetime import datetime
 
 def create_user(newuser):
-
+    """"""
     if db.session.query(User).filter(User.user_id == newuser.user_id).first() is None:
         db.session.add(newuser)
         db.session.commit()
 
-def add_photo():
-    pass
-
-
+def add_photo(newphoto):
+    """"""
+    if db.session.query(Photo).filter(Photo.photo_id == newphoto.photo_id).first() is None:
+        db.session.add(newphoto)
+        db.session.commit()
