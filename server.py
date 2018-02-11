@@ -55,7 +55,21 @@ def display_userinfo():
                             photos2_urls = photos2_urls)
 
 
-# @app.route('/bestnine', methods)
+@app.route('/text-visual')
+def visualize_texts:
+    photo_ids_1 = request_api.get_photos_by_userid(user1.user_id, sort='views', per_page=100)
+    for photo_id in photo_ids_1:
+        photo = request_api.get_photo_by_photoid(photo_id)
+        db_utils.add_photo(photo)
+
+    photo_ids_2 = request_api.get_photos_by_userid(user2.user_id, sort='views', per_page=100)
+    for photo_id in photo_ids_2:
+        photo = request_api.get_photo_by_photoid(photo_id)
+        db_utils.add_photo(photo)
+
+
+    return render_template('text-visual.html')
+
 
 
 if __name__ == "__main__":

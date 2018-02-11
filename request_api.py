@@ -92,14 +92,14 @@ def get_photo_by_photoid(photo_id):
     farm_id = photo['farm']
     img_url = 'https://farm' + str(farm_id) + '.staticflickr.com/' + server_id + '/' + photo_id + '_' + secret_id + '_s.jpg'
 
-    user_id = photo['owner']['nsid']    
-    title = photo['title']['_content']
-    description = photo['description']['_content']
+    user_id = photo['owner']['nsid'].encode('utf-8'))  
+    title = photo['title']['_content'].encode('utf-8'))
+    description = photo['description']['_content'].encode('utf-8'))
     tags = []
     #use raw_tag or tag? 
     for i in photo['tags']['tag']:
         # tags.append(i['raw'])
-        tags.append(i['_content'])
+        tags.append(i['_content'].encode('utf-8'))
 
     date = photo['dates']
     #fix the datetime format
