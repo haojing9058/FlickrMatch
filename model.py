@@ -3,6 +3,8 @@
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
+# create_engine('postgres:///flickrgram')
+
 
 class User(db.Model):
     """User of the website"""
@@ -10,46 +12,55 @@ class User(db.Model):
 
     def __repr__(self):
         """Provide helpful representation when printed."""
-        return "<User user_id={} username={} user_location={} photo_count={} photo_since={} profile_url={}>".format(
-            self.user_id, self.username, self.user_location, self.photo_count, 
-            self.photo_since, self.profile_url)
+        return "<User user_id={} username={}>".format(self.user_id, self.username)
 
     user_id = db.Column(db.String(20), primary_key=True)
     username = db.Column(db.String(100), nullable=False)
-    # realname = db.Column(db.String(50))
-    user_location = db.Column(db.String(100))
-    photo_count = db.Column(db.Integer, nullable=False)
-    photo_since = db.Column(db.DateTime)
-    profile_url = db.Column(db.String(200), nullable=False)
 
 
 class Photo(db.Model):
     """Photo in the website """
     __tablename__ = 'photos'
 
-    def __repr__(self):
-        """Provide helpful representation when printed."""
-        return "<Photo photo_id={} user_id={} title={} tags={} description={} date_posted={} date_taken={} country={} place_id={} lat={} lon={} url={} img_url={}>".format(self.photo_id, 
-            self.user_id, self.title, self.tags, self.description,
-            self.date_posted, self.date_taken, self.country, self.place_id,
-            self.lat, self.lon, self.url, self.img_url)
+    # def __repr__(self):
+    #     """Provide helpful representation when printed."""
+    #     return u'<Photo photo_id={} user_id={} username={} description = {} tags={} title={} views={} url={} date_taken={} date_upload={} place_id={} media={}>'.format(self.photo_id,
+    #         self.user_id, self.username,self.description, 
+    #         self.tags, self.title, self.views, self.url, self.date_taken, 
+    #         self.date_upload, self.place_id, self.media)
 
     photo_id = db.Column(db.String(20), primary_key=True)
     user_id = db.Column(db.String(20), db.ForeignKey('users.user_id'))
-    title = db.Column(db.String(100))
+    username = db.Column(db.String(100), nullable=False)
     description = db.Column(db.String())
     tags = db.Column(db.String())
-    date_posted = db.Column(db.DateTime, nullable=False)
-    date_taken = db.Column(db.DateTime)
-    country = db.Column(db.String(20))
-    place_id = db.Column(db.String(30))
-    lat = db.Column(db.String(15))
-    lon = db.Column(db.String(15))
+    title = db.Column(db.String(100))
+    views = db.Column(db.Integer, nullable=False)
     url = db.Column(db.String(200), nullable=False)
-    img_url = db.Column(db.String(200), nullable=False)
+    date_taken = db.Column(db.DateTime)
+    date_upload = db.Column(db.DateTime, nullable=False)
+    place_id = db.Column(db.String(30))
+    media = db.Column(db.String(10), nullable=False)
 
     users = db.relationship('User', backref=db.backref('photos'))
 
+# class User(db.Model):
+#     """User of the website"""
+#     __tablename__ = 'users'
+
+#     def __repr__(self):
+#         """Provide helpful representation when printed."""
+#         return "<User user_id={} username={} user_location={} photo_count={} photo_since={} profile_url={}>".format(
+#             self.user_id, self.username, self.user_location, self.photo_count, 
+#             self.photo_since, self.profile_url)
+
+#     user_id = db.Column(db.String(20), primary_key=True)
+#     username = db.Column(db.String(100), nullable=False)
+#     # realname = db.Column(db.String(50))
+#     user_location = db.Column(db.String(50))
+#     photo_count = db.Column(db.Integer, nullable=False)
+#     photo_since = db.Column(db.DateTime)
+#     profile_url = db.Column(db.String(200), nullable=False)
 
 ##############################################################################
 # Helper functions
