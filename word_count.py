@@ -1,9 +1,21 @@
 import pandas as pd
 from sqlalchemy import create_engine
 from string import punctuation
+from collections import Counter
 from model import User, Photo
 from model import connect_to_db, db
 import request_api
+
+def get_word_count(username):
+    tags = db.session.query(Photo.tags).filter(Photo.username == username).all()
+    tag_ls = [e for l in tags for e in l]
+    word_ls = [word for sentence in tag_ls for word in sentence.split()]
+    counts = Counter(word_ls)
+    word_count_df = pd.DataFrame.from_dict(counts, orient='index').reset_index()
+    word_count_df['user'] = pd.Series(username, index=word_count_df.index)
+    word_count_df.columns=['word','count','user']
+    return word_count_df
+
 
 
 
@@ -26,10 +38,26 @@ def preprocess (str):
     for p in list(punctuation):
         return str.lower().replace(p, '')
 
+def 
 
-#get photos df
-photos = pd.read_sql_table('photos', engine, columns=['photo_id', 'user_id', 
-        'title', 'description', 'tags'])[photos['user_id'].isin([user1_id, user2_id])
+def get_df(username1, username2):
+    """
+    """
+    # Get title, description, tags of photos of username1 and username2
+    df = pd.read_sql_table('photos', engine, columns=['photo_id',
+            'title', 'description', 'tags', 'username'])
+    df = df[df['username'].isin([username1, username2])]
+    # Preprocess title, description, and tags
+    df['title'] = df.title.apply(preprocess)
+    df['description'] = df.description.apply(preprocess)
+    df['tags'] = df.tags.apply(preprocess)
+
+
+    words = pd.DataFrame(columns=['word', 'count_user1', 'count_use2', 'count_total'])
+
+    # if word in
+
+
 
 #convert 'tags' column as list of strings
 photos['tags'] = photos.tags.apply(preprocess)
