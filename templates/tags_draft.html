@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html>
+<head>
+  <title></title>
+</head>
+<body>
+  <script src="https://d3js.org/d3.v4.min.js"></script>
+  <svg width = '960' height='960' > </svg>
+
+  <script>
+
+    var scaleRadius = d3.scaleLinear().domain([d3.min(data, function(d) {
+                return +d[columnForRadius];
+            }), d3.max(data, function(d) {
+                return +d[columnForRadius];
+            })]).range([5, 18])
+    var colorCircles = d3.scaleOrdinal(d3.schemeCategory10);
+
+    d3.csv('/static/test.csv', function(error, data) {
+      if (error) {
+        console.error('Error getting or parsing the data.');
+      throw error;
+    }
+      console.log(data)});
+
+
+  var svg = d3.select('body').append('svg')
+ 
+  svg.selectAll("g myCircleText")
+      .data(data)
+      .enter()
+      .append('class','g')
+      .attr("transform", function(d){return "translate("+d.x+",80)"})
+
+  var circle = svg.append("circle")
+      .attr("r", function(d){return d.count} )
+      .attr("stroke","black")
+      .attr("fill", "white")
+      .call()
+ 
+    /* Create the text for each block */
+    svg.append("text")
+      // .attr("dx", function(d){return -20})
+      .text(function(d){return d.word})
+
+  </script>
+</body>
+</html>
