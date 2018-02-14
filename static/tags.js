@@ -14,7 +14,7 @@ function bubbleChart() {
         var tooltip = selection
             .append("div")
             .style("position", "absolute")
-            .style("visibility", "hidden")
+            // .style("visibility", "hidden")
             .style("color", "white")
             .style("padding", "8px")
             .style("background-color", "#626D71")
@@ -47,10 +47,13 @@ function bubbleChart() {
             return +d[columnForRadius];
         })]).range([5, 18])
 
-        var node = svg.selectAll("circle")
-            .data(data)
-            .enter()
-            .append("circle")
+
+        var node = svg.selectAll(".node")
+                    .data()
+                    .enter().append("g")
+                    .attr("class", "node")
+        
+        node.append("circle")
             .attr('r', function(d) {
                 return scaleRadius(d[columnForRadius])
             })
@@ -58,16 +61,22 @@ function bubbleChart() {
                 return colorCircles(d[columnForColors])
             })
             .attr('transform', 'translate(' + [width / 2, height / 2] + ')')
-            .on("mouseover", function(d) {
-                tooltip.html(d[columnForColors] + "<br>" + d.word + "<br>" + d[columnForRadius] + " hearts");
-                return tooltip.style("visibility", "visible");
-            })
-            .on("mousemove", function() {
-                return tooltip.style("top", (d3.event.pageY - 10) + "px").style("left", (d3.event.pageX + 10) + "px");
-            })
-            .on("mouseout", function() {
-                return tooltip.style("visibility", "hidden");
+        
+        node.append('text')
+            .attr("dy", ".3em")
+            .text(function(d){
+                return d.word
             });
+            // .on("mouseover", function(d) {
+            //     tooltip.html(d[columnForColors] + "<br>" + d.word + "<br>" + d[columnForRadius] + " hearts");
+            //     return tooltip.style("visibility", "visible");
+            // })
+            // .on("mousemove", function() {
+            //     return tooltip.style("top", (d3.event.pageY - 10) + "px").style("left", (d3.event.pageX + 10) + "px");
+            // })
+            // .on("mouseout", function() {
+            //     return tooltip.style("visibility", "hidden");
+            // });
     }
 
     chart.width = function(value) {

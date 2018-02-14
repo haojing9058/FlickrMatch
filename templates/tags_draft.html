@@ -1,14 +1,15 @@
 <!DOCTYPE html>
-<!DOCTYPE html>
-<html>
-<head>
-  <title></title>
-</head>
-<body>
-  <script src="https://d3js.org/d3.v4.min.js"></script>
-  <svg width = '960' height='960' > </svg>
 
-  <script>
+<div class="chart-example" id="chart">
+  <svg>
+    <g></g>
+  </svg>
+
+</div>
+
+<script src="https://d3js.org/d3.v4.min.js"></script>
+
+<script>
 
     var scaleRadius = d3.scaleLinear().domain([d3.min(data, function(d) {
                 return +d[columnForRadius];
@@ -17,15 +18,20 @@
             })]).range([5, 18])
     var colorCircles = d3.scaleOrdinal(d3.schemeCategory10);
 
-    d3.csv('/static/test.csv', function(error, data) {
+    // convert test.csv into array of objects
+    d3.csv('/static/test.csv', function(d){
+      d.count = +d.count;
+      if (d.count) return d;
+    }, function(error, data) {
       if (error) {
         console.error('Error getting or parsing the data.');
       throw error;
-    }
-      console.log(data)});
-
+    });
 
   var svg = d3.select('body').append('svg')
+              .attr('width', width)
+              .attr('height', height)
+              .
  
   svg.selectAll("g myCircleText")
       .data(data)
