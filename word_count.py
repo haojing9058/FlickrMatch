@@ -1,5 +1,3 @@
-
-
 import pandas as pd
 from sqlalchemy import create_engine
 from string import punctuation
@@ -22,10 +20,8 @@ def get_tags_df(username1, username2):
         word_count_df = pd.DataFrame.from_dict(counts, orient='index').reset_index()
         word_count_df['user'] = pd.Series(username, index=word_count_df.index)
 
-        # word_count_df.columns = ['word','count','user']
         word_count_df.rename(columns={'index':'word', 0:'count', 'user':'user'}, inplace=True)
         df = word_count_df.sort_values(by='count',ascending = False).head(20)
-        # df = word_count_df.head(30)
         return df
 
     words1 = get_word_count(username1)
@@ -41,21 +37,21 @@ def get_tags_df(username1, username2):
 
     words2 = words2.merge(common, how='left', on='word')
     words2 = words2[words2['count_y'].isnull()].drop(['count_y', 'user_y'], axis=1)
-    # words2 = words[['word', 'count_x', 'user_x'], columns=['word','count','user']]
     words2.columns = ['word','count','user']
 
-    result = pd.concat([common, words1, words2])
-    return result
+    df = pd.concat([common, words1, words2])
+    return df
+
 
 def get_csv(df):
     """Save dataframe to .csv"""
-    return result.to_csv(path_or_buf=r'static/tags.csv', header=False, index=False)
+    return df.to_csv(path_or_buf=r'static/tags.csv', header=False, index=False)
 
-def calculate_match_score(df):
+def get_match_score(df):
     """ Calculate match score given the "word, count, user" df.
     """
     sum_of_common = df.loc[df['user']=='common', 'count'].sum()
-    sum_of_individual = df.loc['count'].sum()
+    sum_of_individual = df['count'].sum()
     match_score = float(sum_of_common) / float(sum_of_individual)
     return '{0:.2f}%'.format(match_score*100)
 

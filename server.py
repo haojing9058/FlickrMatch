@@ -20,8 +20,6 @@ def display_userinfo():
     """User info page."""
     username1 = request.form.get('username1')
     username2 = request.form.get('username2')
-
-    # word_count.get_csv_tags('username1', 'username2')
     
     def helper(username):
         """helper function to get the top 9 photo"""
@@ -45,61 +43,20 @@ def display_userinfo():
    
 @app.route('/tags-bubble')
 def display_tags_bubble():
-    # username1 = request.form.get('username1')
-    # username2 = request.form.get('username2')
-    # word_count.get_csv_tags('username1', 'username2')
-    
-    return render_template('tags_draft.html')
-# @app.route('/text-visual')
-# def visualize_texts():
-#     """visualize title, description and tags."""
+    """Display bubble graph;
+    display match score
+    """
+    username1 = request.args.get('username1')
+    username2 = request.args.get('username2')
 
+    df = word_count.get_tags_df(username1, username2)
+    word_count.get_csv(df)
+    match_score = word_count.get_match_score(df)
 
-
-#     # user1_id = request.args.get('user1_id')
-#     # user2_id = request.args.get('user2_id')
-
-#     # photo_ids_1 = request_api.get_photos_by_userid(user1_id, sort='views', per_page=30)
-#     # for photo_id in photo_ids_1:
-#     #     photo = request_api.get_photo_by_photoid(photo_id)
-#     #     db_utils.add_photo(photo)
-
-#     # photo_ids_2 = request_api.get_photos_by_userid(user2_id, sort='views', per_page=30)
-#     # for photo_id in photo_ids_2:
-#     #     photo = request_api.get_photo_by_photoid(photo_id)
-#     #     db_utils.add_photo(photo)
-
-
-#     return render_template('text-visual.html')
-
- # user_id1 = request_api.get_user_by_username(username2)
-
-    # #add user into db
-    # db_utils.create_user(user1)
-    # db_utils.create_user(user2)
-
-    # #obtain best_nine photos id for each user
-    # photo_ids_1 = request_api.get_photos_by_userid(user1.user_id)
-    # photo_ids_2 = request_api.get_photos_by_userid(user2.user_id)
-
-    # # obtain best_nine photo_urls for each user
-    # photos1_urls = []
-    # for photo_id in photo_ids_1:
-    #     photo = request_api.get_photo_by_photoid(photo_id)
-    #     db_utils.add_photo(photo)
-    #     img_url = photo.img_url
-    #     photos1_urls.append(img_url)
-
-    # photos2_urls = []
-    # for photo_id in photo_ids_2:
-    #     photo = request_api.get_photo_by_photoid(photo_id)
-    #     db_utils.add_photo(photo)
-    #     img_url = photo.img_url
-    #     photos2_urls.append(img_url)
-
-
-    
-
+    return render_template('tags_draft.html', 
+                            username1 = username1,
+                            username2 = username2,
+                            match_score=match_score)
 
 if __name__ == "__main__":
     # We have to set debug=True here, since it has to be True at the
