@@ -4,6 +4,7 @@ from jinja2 import StrictUndefined
 from model import connect_to_db, db, User, Photo
 import request_api
 import db_utils
+import word_count
 
 app = Flask(__name__)
 app.secret_key = '\xf5\xf8\xb0t\x02\xdf\xd5\x7f\xbe1$P\xb4\xed\xfc k\xd4:\xa4\x96\x852h' 
@@ -20,6 +21,8 @@ def display_userinfo():
     username1 = request.form.get('username1')
     username2 = request.form.get('username2')
 
+    word_count.get_csv_tags('username1', 'username2')
+    
     def helper(username):
         """helper function to get the top 9 photo"""
             #get user id from Flickr api
@@ -42,12 +45,15 @@ def display_userinfo():
    
 @app.route('/tags-bubble')
 def display_tags_bubble():
+    username1 = request.form.get('username1')
+    username2 = request.form.get('username2')
+    # word_count.get_csv_tags('username1', 'username2')
+    
     return render_template('tags_draft.html')
 # @app.route('/text-visual')
 # def visualize_texts():
 #     """visualize title, description and tags."""
-#     username1 = request.form.get('username1')
-#     username2 = request.form.get('username2')
+
 
 
 #     # user1_id = request.args.get('user1_id')
