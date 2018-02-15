@@ -42,7 +42,7 @@ def display_userinfo():
    
 @app.route('/tags-bubble')
 def display_tags_bubble():
-    return render_template('tags-bubble.html')
+    return render_template('tags_draft.html')
 # @app.route('/text-visual')
 # def visualize_texts():
 #     """visualize title, description and tags."""
