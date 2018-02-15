@@ -21,7 +21,7 @@ def display_userinfo():
     username1 = request.form.get('username1')
     username2 = request.form.get('username2')
 
-    word_count.get_csv_tags('username1', 'username2')
+    # word_count.get_csv_tags('username1', 'username2')
     
     def helper(username):
         """helper function to get the top 9 photo"""
@@ -45,8 +45,8 @@ def display_userinfo():
    
 @app.route('/tags-bubble')
 def display_tags_bubble():
-    username1 = request.form.get('username1')
-    username2 = request.form.get('username2')
+    # username1 = request.form.get('username1')
+    # username2 = request.form.get('username2')
     # word_count.get_csv_tags('username1', 'username2')
     
     return render_template('tags_draft.html')
