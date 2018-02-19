@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, request, flash, session
+from flask import Flask, render_template, redirect, request, session, jsonify
 from flask_debugtoolbar import DebugToolbarExtension
 from jinja2 import StrictUndefined
 from model import connect_to_db, db, User, Photo
@@ -14,6 +14,7 @@ app.jinja_env.undefined = StrictUndefined
 def index():
     """Homepage."""
     return render_template('homepage.html')
+    
 
 @app.route('/userinfo', methods=['POST'])
 def display_userinfo():
@@ -40,7 +41,8 @@ def display_userinfo():
                             username2 = username2,
                             urls1 = url_list1,
                             urls2 = url_list2)
-   
+
+
 @app.route('/tags-bubble')
 def display_tags_bubble():
     """Display bubble graph;
@@ -50,13 +52,46 @@ def display_tags_bubble():
     username2 = request.args.get('username2')
 
     df = word_count.get_tags_df(username1, username2)
-    word_count.get_csv(df)
+    word_count.get_tags_csv(df)
     match_score = word_count.get_match_score(df)
+    text_url = jsonify("static/tags.csv")
 
     return render_template('tags_draft.html', 
                             username1 = username1,
                             username2 = username2,
-                            match_score=match_score)
+                            match_score=match_score,
+                            text_url = text_url)
+
+   
+# @app.route('/tags-bubble')
+# def display_partial_view():
+#     """Display bubble graph;
+#     display match score
+#     """
+#     texttype = request.arg.get('texttype') #get from dropdown menu
+#     username1 = request.args.get('username1')
+#     username2 = request.args.get('username2')
+
+#     if texttype = "tags":
+#         df = word_count.get_tags_df(username1, username2)
+#         word_count.get_tags_csv(df)
+#         match_score = word_count.get_match_score(df)
+#         text_url = "static/tags.csv"
+
+#     elif texttype = "title":
+#         df = word_count.get_titles_df(username1, username2)
+#         word_count.get_titles_csv(df)
+#         match_score = word_count.get_match_score(df)
+#         text_url = "static/title.csv"
+
+#     elif texttype = "description":
+#         df = word_count.get_description_df(username1, username2)
+#         word_count.get_titles_csv(df)
+#         match_score = word_count.get_match_score(df)
+#         text_url = "static/description.csv"
+
+#     return jsonify(text_url)
+
 
 if __name__ == "__main__":
     # We have to set debug=True here, since it has to be True at the
