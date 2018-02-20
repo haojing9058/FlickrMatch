@@ -9,6 +9,8 @@ from model import User, Photo
 from model import connect_to_db, db
 
 STOP_WORDS = set(stopwords.words('english'))
+SOCIAL_WORDS = set(['facebook', 'instagram', 'thanks', 'follow', 'share',
+            'please', 'page', 'visit', 'thanks', 'feel'])
 
 def users_word_count(username1, username2, text_type='tags'):
     """Return certain text_type of word counts for each user and their common word counts"""
@@ -32,7 +34,7 @@ def users_word_count(username1, username2, text_type='tags'):
         #get a list of words
         word_ls = [w for sentence in str_lst_new for w in sentence.split()]
         #remove stop words
-        filtered_words = [w for w in word_ls if not w in STOP_WORDS]
+        filtered_words = [w for w in word_ls if not w in STOP_WORDS and SOCIAL_WORDS]
         #get word count dictionary
         counts = Counter(filtered_words)
         #convert dict to dataframe
@@ -42,7 +44,6 @@ def users_word_count(username1, username2, text_type='tags'):
         #rename columns
         df.rename(columns={'index':'word', 0:'count', 'user':'user'}, inplace=True)
         #drop rows if word length is over 15
-        # df.drop(df['word'].map(len)>15, inplace=True)
         df = df[df['word'].apply(lambda x: len(x) < 15)]
         #sort and select top 20
         df = df.sort_values(by='count',ascending = False).head(20)
@@ -69,7 +70,7 @@ def users_word_count(username1, username2, text_type='tags'):
     words2.columns = ['word','count','user']
 
     #concatenat the common, user 1 only, and user 2 only
-    df = pd.concat([common, words1, words2])
+    df = pd.concat([words1, words2, common])
 
     return df
 
