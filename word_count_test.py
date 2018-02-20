@@ -1,24 +1,20 @@
 import pandas as pd
-import nltk
-from nltk.corpus import stopwords
-from string import punctuation
 from sqlalchemy import create_engine
 from string import punctuation
 from collections import Counter
 from model import User, Photo
 from model import connect_to_db, db
 
-STOP_WORDS = set(stopwords.words('english'))
 
-def users_word_count(username1, username2, text_type='tags'):
+def get_tags_df(username1, username2, text_type='tags'):
     """Return certain text_type of word counts for each user and their common word counts"""
-    def count_word(username, text_type='tags'):
+    def get_word_count(username, text_type):
         """Return certain text_type of word counts dataframe for a given user.
         (string1, string2) --> dataframe
         text_type: options of "tags", title", "description". Defalt to "tags".
         """
         #get a list of tutples of srtings
-        if text_type == 'tags':
+        if text_type == 'tag':
             raw_data = db.session.query(Photo.tags).filter(Photo.username == username).all()
         elif text_type == 'title':
             raw_data = db.session.query(Photo.title).filter(Photo.username == username).all()
@@ -26,31 +22,25 @@ def users_word_count(username1, username2, text_type='tags'):
             raw_data = db.session.query(Photo.description).filter(Photo.username == username).all()
         # what if user do not use tags??
         #get a list of strings
-        str_lst = [e for l in raw_data for e in l]
-        #lower case and strip punctuations of a string
-        str_lst_new = map(strip_punctuation, str_lst)
+        record_ls = [e for l in raw_data for e in l]
         #get a list of words
-        word_ls = [w for sentence in str_lst_new for w in sentence.split()]
-        #remove stop words
-        filtered_words = [w for w in word_ls if not w in STOP_WORDS]
+        word_ls = [word for sentence in record_ls for word in sentence.split()]
         #get word count dictionary
-        counts = Counter(filtered_words)
+        counts = Counter(word_ls)
         #convert dict to dataframe
-        df = pd.DataFrame.from_dict(counts, orient='index').reset_index()
+        word_count_df = pd.DataFrame.from_dict(counts, orient='index').reset_index()
         #add "user" column to the dataframe
-        df['user'] = pd.Series(username, index=df.index)
+        word_count_df['user'] = pd.Series(username, index=word_count_df.index)
         #rename columns
-        df.rename(columns={'index':'word', 0:'count', 'user':'user'}, inplace=True)
-        #drop rows if word length is over 15
-        # df.drop(df['word'].map(len)>15, inplace=True)
-        df = df[df['word'].apply(lambda x: len(x) < 15)]
+        word_count_df.rename(columns={'index':'word', 0:'count', 'user':'user'}, inplace=True)
         #sort and select top 20
-        df = df.sort_values(by='count',ascending = False).head(20)
+        df = word_count_df.sort_values(by='count',ascending = False).head(20)
 
         return df
+
     #word counts for each user
-    words1 = count_word(username1, text_type)
-    words2 = count_word(username2, text_type)
+    words1 = get_word_count(username1, text_type)
+    words2 = get_word_count(username2, text_type)
 
     #common word and sum of counts
     common = words1.merge(words2, how='inner', on='word')
@@ -73,9 +63,6 @@ def users_word_count(username1, username2, text_type='tags'):
 
     return df
 
-# def process_text(str):
-
-
 def get_tags_csv(df):
     """Save tags dataframe to .csv"""
     return df.to_csv(path_or_buf=r'static/tags.csv', header=False, index=False)
@@ -96,10 +83,21 @@ def get_match_score(df):
     match_score = float(sum_of_common) / float(sum_of_individual)
     return '{0:.2f}%'.format(match_score*100)
 
-def strip_punctuation (str):
-    for p in list(punctuation):
-        str = str.lower().replace(p, '')
-    return str
+# def get_word_count(username):
+#     """Get a dataframe with word, count, and user, given a username."""
+#     #get a list of tutples of srtings
+#     title = db.session.query(Photo.title).filter(Photo.username==usernmae).all()
+#     #get a list of strings
+#     ls = [e for l in title for e in l]
+#     #get a list of words
+#     word_ls = [word for sentence in ls for word in sentence.split()]
+#     #get word count 
+#     counts = Counter(word_ls)
+#     word_count_df = pd.DataFrame.from_dict(counts, orient='index').reset_index()
+#     word_count_df['user'] = pd.Series(username, index=word_count_df.index)
+#     word_count_df.rename(columns={'index':'word', 0:'count', 'user':'user'}, inplace=True)
+#     df = word_count_df.sort_values(by='count',ascending = False).head(20)
+#     return df
 
 if __name__ == "__main__":
     from flask import Flask, request, session

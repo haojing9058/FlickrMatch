@@ -14,7 +14,7 @@ app.jinja_env.undefined = StrictUndefined
 def index():
     """Homepage."""
     return render_template('homepage.html')
-    
+
 
 @app.route('/userinfo', methods=['POST'])
 def display_userinfo():
@@ -43,7 +43,7 @@ def display_userinfo():
                             urls2 = url_list2)
 
 
-@app.route('/tags-bubble')
+@app.route('/tags-bubble', methods=["GET"])
 def display_tags_bubble():
     """Display bubble graph;
     display match score
@@ -51,46 +51,51 @@ def display_tags_bubble():
     username1 = request.args.get('username1')
     username2 = request.args.get('username2')
 
-    df = word_count.get_tags_df(username1, username2)
+    df = word_count.users_word_count(username1, username2)
     word_count.get_tags_csv(df)
     match_score = word_count.get_match_score(df)
-    text_url = jsonify("static/tags.csv")
+    # text_url = "static/tags.csv"
 
     return render_template('tags_draft.html', 
                             username1 = username1,
                             username2 = username2,
-                            match_score=match_score,
-                            text_url = text_url)
+                            match_score=match_score)
 
    
-# @app.route('/tags-bubble')
-# def display_partial_view():
-#     """Display bubble graph;
-#     display match score
-#     """
-#     texttype = request.arg.get('texttype') #get from dropdown menu
-#     username1 = request.args.get('username1')
-#     username2 = request.args.get('username2')
+@app.route('/tags-bubble', methods=["POST"])
+def display_partial_view():
+    """Display bubble graph;
+    display match score
+    """
+    texttype = request.form.get('texttype') #get from dropdown menu
+    username1 = request.form.get('username1')
+    username2 = request.form.get('username2')
+    text_url = {}
 
-#     if texttype = "tags":
-#         df = word_count.get_tags_df(username1, username2)
-#         word_count.get_tags_csv(df)
-#         match_score = word_count.get_match_score(df)
-#         text_url = "static/tags.csv"
+    if texttype == "tags":
+        # df = word_count.get_tags_df(username1, username2)
+        # word_count.get_tags_csv(df)
+        # match_score = word_count.get_match_score(df)
+        text_url = "static/tags.csv"
 
-#     elif texttype = "title":
-#         df = word_count.get_titles_df(username1, username2)
-#         word_count.get_titles_csv(df)
-#         match_score = word_count.get_match_score(df)
-#         text_url = "static/title.csv"
+    elif texttype == "title":
+        df = word_count.users_word_count(username1, username2, text_type='title')
+        word_count.get_title_csv(df)
+        # match_score = word_count.get_match_score(df)
+        text_url = "static/title.csv"
 
-#     elif texttype = "description":
-#         df = word_count.get_description_df(username1, username2)
-#         word_count.get_titles_csv(df)
-#         match_score = word_count.get_match_score(df)
-#         text_url = "static/description.csv"
+    elif texttype == "description":
+        df = word_count.users_word_count(username1, username2, text_type='description')
+        word_count.get_description_csv(df)
+        # match_score = word_count.get_match_score(df)
+        text_url = "static/description.csv"
 
-#     return jsonify(text_url)
+    return text_url
+    # return render_template('tags_draft.html', 
+    #                 username1 = username1,
+    #                 username2 = username2,
+    #                 match_score=match_score,
+    #                 text_url = text_url)
 
 
 if __name__ == "__main__":
