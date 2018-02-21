@@ -56,7 +56,7 @@ def display_tags_bubble():
     match_score = word_count.get_match_score(df)
     # text_url = "static/tags.csv"
 
-    return render_template('tags_draft.html', 
+    return render_template('bubble-page.html', 
                             username1 = username1,
                             username2 = username2,
                             match_score=match_score)
@@ -70,32 +70,30 @@ def display_partial_view():
     texttype = request.form.get('texttype') #get from dropdown menu
     username1 = request.form.get('username1')
     username2 = request.form.get('username2')
-    text_url = {}
+    result = {}
 
     if texttype == "tags":
-        # df = word_count.get_tags_df(username1, username2)
-        # word_count.get_tags_csv(df)
-        # match_score = word_count.get_match_score(df)
+        df = word_count.users_word_count(username1, username2)
+        word_count.get_tags_csv(df)
+        match_score = word_count.get_match_score(df)
         text_url = "static/tags.csv"
 
     elif texttype == "title":
         df = word_count.users_word_count(username1, username2, text_type='title')
         word_count.get_title_csv(df)
-        # match_score = word_count.get_match_score(df)
+        match_score = word_count.get_match_score(df)
         text_url = "static/title.csv"
 
     elif texttype == "description":
         df = word_count.users_word_count(username1, username2, text_type='description')
         word_count.get_description_csv(df)
-        # match_score = word_count.get_match_score(df)
+        match_score = word_count.get_match_score(df)
         text_url = "static/description.csv"
 
-    return text_url
-    # return render_template('tags_draft.html', 
-    #                 username1 = username1,
-    #                 username2 = username2,
-    #                 match_score=match_score,
-    #                 text_url = text_url)
+    result['texttype'] = text_url
+    result['match'] = match_score
+
+    return jsonify(result)
 
 
 if __name__ == "__main__":

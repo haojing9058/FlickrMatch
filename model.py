@@ -1,8 +1,9 @@
 """Models and database function for Flickrgram project"""
-
+from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
+app = Flask(__name__)
 # create_engine('postgres:///flickrgram')
 
 
@@ -31,18 +32,27 @@ class Photo(db.Model):
 
     photo_id = db.Column(db.String(20), primary_key=True)
     user_id = db.Column(db.String(20), db.ForeignKey('users.user_id'))
-    username = db.Column(db.String(100), nullable=False)
+    username = db.Column(db.String(100))
     description = db.Column(db.String())
     tags = db.Column(db.String())
     title = db.Column(db.String(100))
-    views = db.Column(db.Integer, nullable=False)
+    views = db.Column(db.Integer)
     url = db.Column(db.String(200), nullable=False)
     date_taken = db.Column(db.DateTime)
-    date_upload = db.Column(db.DateTime, nullable=False)
+    date_upload = db.Column(db.DateTime)
     place_id = db.Column(db.String(30))
-    media = db.Column(db.String(10), nullable=False)
+    media = db.Column(db.String(10))
 
     users = db.relationship('User', backref=db.backref('photos'))
+
+# class Recommendated_Photo(db.Model):
+#     """Recommendated photos"""
+
+#     __tablename__ = 'recommendation'
+#     photo_id = db.Column(db.String(20), primary_key=True)
+#     url = db.Column(db.String(200), nullable=False)
+
+
 
 # class User(db.Model):
 #     """User of the website"""
@@ -65,13 +75,11 @@ class Photo(db.Model):
 ##############################################################################
 # Helper functions
 
-def init_app(app):
+# def init_app(app):
     # So that we can use Flask-SQLAlchemy, we'll make a Flask app.
-    # from flask import Flask
     # app = Flask(__name__)
-
-    connect_to_db(app)
-    print "Connected to DB."
+    # connect_to_db(app)
+    # print "Connected to DB."
 
 
 def connect_to_db(app):
@@ -79,7 +87,6 @@ def connect_to_db(app):
 
     # Configure to use our database.
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres:///flickrgram'
-    app.config['SQLALCHEMY_ECHO'] = False
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.app = app
     db.init_app(app)
@@ -90,9 +97,12 @@ if __name__ == "__main__":
     # you in a state of being able to work with the database directly.
 
     # So that we can use Flask-SQLAlchemy, we'll make a Flask app.
+    # app = Flask(__name__)
 
-    from server import app
+    # from server import app
     connect_to_db(app)
     db.create_all()
     print "Connected to DB."
+
+    # db.session.close()
 

@@ -28,7 +28,9 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
 <body>
-  <div id='matchScore' data-username1='{{ username1 }}' data-username2= '{{ username2 }}' ><h3>{{ username1 }} and {{ username2}} is {{ match_score }} MATCH!</h3></div>
+  <div id='matchScore' data-username1='{{ username1 }}' data-username2= '{{ username2 }}' 
+  data-matchscore='{{ match_score}}'></div>
+  <div id=match><h3>{{ username1 }} and {{ username2}} is {{ match_score }} MATCH in photo tags!</h3></div>
   <div>
     <select id='text-source' name='text-source'>
       <option value='tags'>Photo Tags</option>
@@ -47,8 +49,8 @@
     
     if ($('#text-source').val() == 'tags') {
       $.post(url, {'texttype': 'tags', 'username1': username1,'username2': username2}, function(results){
-        console.log(results);
-        // bubbleGraph(results);
+        var matchscore = results.match;
+        $('#match').html('<h3>' + username1 + ' and ' + username2 + ' is ' + matchscore  +' MATCH in photo tags!' + '</h3>');
         d3.select("svg").remove();
         updateTags();
         console.log('finish');
@@ -57,21 +59,19 @@
 
     if ($('#text-source').val() == 'title') {
       $.post(url, {'texttype': 'title', 'username1': username1,'username2': username2},function(results){
-        console.log(results);
+        var matchscore = results.match;
+        $('#match').html('<h3>' + username1 + ' and ' + username2 + ' is ' + matchscore  +' MATCH in photo tags!' + '</h3>');
         d3.select("svg").remove();
-        console.log('finish');
         updateTitle();
-        // bubbleGraph(results);
-
       });
     }
 
     if ($('#text-source').val() == 'description') {
       $.post(url, {'texttype': 'description', 'username1': username1,'username2': username2}, function(results){
-        console.log(results);
+        var matchscore = results.match;
+        $('#match').html('<h3>' + username1 + ' and ' + username2 + ' is ' + matchscore  +' MATCH in photo tags!' + '</h3>');
         d3.select("svg").remove();
         updateDescription();
-
       });
     }
   }

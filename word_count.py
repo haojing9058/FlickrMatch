@@ -97,6 +97,10 @@ def get_match_score(df):
     match_score = float(sum_of_common) / float(sum_of_individual)
     return '{0:.2f}%'.format(match_score*100)
 
+def get_text_ls(file):
+    """return a list of tags by common users"""
+    pd.read_csv(file, )
+
 def strip_punctuation (str):
     for p in list(punctuation):
         str = str.lower().replace(p, '')

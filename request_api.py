@@ -15,7 +15,7 @@ RESPONSE_FORMAT = 'json&nojsoncallback=1'
 
 # helper function for creating request
 def get_req_base():
-    return "%s?api_key=%s&format=%s"%(API_URL, API_KEY, RESPONSE_FORMAT)
+    return "%s?api_ky=%s&format=%s"%(API_URL, API_KEY, RESPONSE_FORMAT)
 
 def base_params():
     return {
@@ -87,9 +87,54 @@ def seed_photos_by_userid(user_id, sort='interesting', per_page=30):
         else:
             pass
 
+# get recommendated photos based on text info
+# tags, tag_mode, text, sort, content_type=1, machine_tags, media='photo', per_page=et
+def recommendation_by_text(tags, text, per_page=24):
+    """Get most relavent photos based on given text info(tags, title and description)
+    tags: a comma-delimited list of tags
+    text: list of words
+    Add the photos into db if it's not in it, and return a list of photo_id.
+    """
+    params = base_params()
+    params['method'] = "flickr.photos.search"
+    params['tags'] = tags
+    params['text'] = text
+    params['sort'] = 'relevance'
+    params['content_type'] = 1
+    # params['machine_tags']
+    # params['machine_tags_mode']
+    params['media'] = 'photos'
+    params['extras'] = 'url_sq'
+    params['per_page'] = per_page
+    response = requests.get(API_URL, params=params).json()
+
+    photos = response['photos']['photo'] #a list of photos
+
+    for p in photos:
+        photo_ids = []
+        photo_id = p['id'].encode('utf-8')
+        photo_ids.append(photo_id)
+        if db.session.query(Photo).get(photo_id) is None:
+            # user_id = p['owner'].encode('utf-8')
+            url = p['url_sq'].encode('utf-8')
+
+            photo = Photo(photo_id=photo_id, url=url)
+
+            db_utils.add_photo(photo)
+
+        else:
+            pass
+
+    return photo_ids
+
+if __name__ == "__main__":
+    from flask import Flask
+    app = Flask(__name__)
+    connect_to_db(app)
+
 
 # def get_user_by_username (username):
-#     """Get a user's info from Flickr given a username"""
+#     """Get a user's info frm Flickr given a username"""
 
 #     # Get Flickr user_id from Flickr given a username.
 #     params_find_by_username = base_params()
