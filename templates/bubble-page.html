@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <meta charset="utf-8">
 <style type="text/css">
@@ -28,15 +29,25 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
 <body>
-  <div id='matchScore' data-username1='{{ username1 }}' data-username2= '{{ username2 }}' 
-  data-matchscore='{{ match_score}}'></div>
-  <div id=match><h3>{{ username1 }} and {{ username2}} is {{ match_score }} MATCH in photo tags!</h3></div>
+  <div id='matchScore' 
+  data-username1='{{ username1 }}' 
+  data-username2= '{{ username2 }}' 
+  data-matchscore='{{ match_score}}'>
+  </div>
+  <div id='match'><h3>{{ username1 }} and {{ username2}} is {{ match_score }} MATCH in photo tags!</h3></div>
   <div>
     <select id='text-source' name='text-source'>
       <option value='tags'>Photo Tags</option>
       <option value='title'>Photo Title</option>
       <option value='description'>Photo Description</option>
     </select>
+  </div>
+
+  <div id='graph'></div>
+  
+  <div>
+    <button> See Recommendation </button>
+    <div id='recommendation'></div>
   </div>
 </body>
 
@@ -45,15 +56,15 @@
   function updateGraph() {
     username1 = $('#matchScore').data('username1');
     username2 = $('#matchScore').data('username2');
-    url = '/tags-bubble'
-    
+    url = '/tags-bubble';
+
     if ($('#text-source').val() == 'tags') {
       $.post(url, {'texttype': 'tags', 'username1': username1,'username2': username2}, function(results){
+        // console.log(results)
         var matchscore = results.match;
         $('#match').html('<h3>' + username1 + ' and ' + username2 + ' is ' + matchscore  +' MATCH in photo tags!' + '</h3>');
         d3.select("svg").remove();
         updateTags();
-        console.log('finish');
       });
     }
 
@@ -77,6 +88,30 @@
   }
 
   $('#text-source').on('change', updateGraph);
+  
+ function loadRecommendation(){
+    url = '/tags-bubble';
+    username1 = $('#matchScore').data('username1');
+    username2 = $('#matchScore').data('username2');
+    $.post(url, {'username1': username1, 'username2': username2, 'texttype': "tags"},
+      function(results){
+        var urls = results.urls;
+        var text = "";
+        var i;
+        for(i = 0; i < urls.length; i++){
+          text += "<img src='" + urls[i] + "'></img><br>";
+        }
+        $('#recommendation').html(text);
+        $('button').hide();
+
+      });
+  }
+
+  $(document).ready(function(){
+    $('button').click(function(){
+      $('#recommendation').load('/tags-bubble', { loadRecommendation });
+    });
+  })
 
     // D3 global variables
   var width = 1200,
@@ -130,14 +165,14 @@
           .on("tick", tick)
           .start();
 
-      var svg = d3.select("body").append("svg");
+      var svg = d3.select("#graph").append("svg");
 
       // svg.selectAll("*").remove();
 
       svg.attr("width", width)
           .attr("height", height);
 
-      var div = d3.select("body").append("div") 
+      var div = d3.select("#graph").append("div") 
         .attr("class", "tooltip")       
         .style("opacity", 1);
 
@@ -276,7 +311,6 @@
         data.forEach(function(d) {
           d.count = +d.count;
         });
-
       //unique cluster/user id's
       var cs = [];
       data.forEach(function(d){
@@ -303,11 +337,11 @@
           .on("tick", tick)
           .start();
 
-      var svg = d3.select("body").append("svg")
+      var svg = d3.select("#graph").append("svg")
           .attr("width", width)
           .attr("height", height);
 
-      var div = d3.select("body").append("div") 
+      var div = d3.select("#graph").append("div") 
         .attr("class", "tooltip")       
         .style("opacity", 1);
 
@@ -479,11 +513,11 @@ function updateDescription() {
           .on("tick", tick)
           .start();
 
-      var svg = d3.select("body").append("svg")
+      var svg = d3.select("#graph").append("svg")
           .attr("width", width)
           .attr("height", height);
 
-      var div = d3.select("body").append("div") 
+      var div = d3.select("#graph").append("div") 
         .attr("class", "tooltip")       
         .style("opacity", 1);
 
@@ -790,3 +824,5 @@ function updateDescription() {
   };
 
 </script>
+
+

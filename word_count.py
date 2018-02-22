@@ -28,25 +28,26 @@ def users_word_count(username1, username2, text_type='tags'):
             raw_data = db.session.query(Photo.description).filter(Photo.username == username).all()
         # what if user do not use tags??
         #get a list of strings
-        str_lst = [e for l in raw_data for e in l]
-        #lower case and strip punctuations of a string
-        str_lst_new = map(strip_punctuation, str_lst)
-        #get a list of words
-        word_ls = [w for sentence in str_lst_new for w in sentence.split()]
-        #remove stop words
-        filtered_words = [w for w in word_ls if not w in STOP_WORDS and SOCIAL_WORDS]
-        #get word count dictionary
-        counts = Counter(filtered_words)
-        #convert dict to dataframe
-        df = pd.DataFrame.from_dict(counts, orient='index').reset_index()
-        #add "user" column to the dataframe
-        df['user'] = pd.Series(username, index=df.index)
-        #rename columns
-        df.rename(columns={'index':'word', 0:'count', 'user':'user'}, inplace=True)
-        #drop rows if word length is over 15
-        df = df[df['word'].apply(lambda x: len(x) < 15)]
-        #sort and select top 20
-        df = df.sort_values(by='count',ascending = False).head(20)
+        if raw_data:
+            str_lst = [e for l in raw_data for e in l]
+            #lower case and strip punctuations of a string
+            str_lst_new = map(strip_punctuation, str_lst)
+            #get a list of words
+            word_ls = [w for sentence in str_lst_new for w in sentence.split()]
+            #remove stop words
+            filtered_words = [w for w in word_ls if not w in STOP_WORDS and SOCIAL_WORDS]
+            #get word count dictionary
+            counts = Counter(filtered_words)
+            #convert dict to dataframe
+            df = pd.DataFrame.from_dict(counts, orient='index').reset_index()
+            #add "user" column to the dataframe
+            df['user'] = pd.Series(username, index=df.index)
+            #rename columns
+            df.rename(columns={'index':'word', 0:'count', 'user':'user'}, inplace=True)
+            #drop rows if word length is over 15
+            df = df[df['word'].apply(lambda x: len(x) < 15)]
+            #sort and select top 20
+            df = df.sort_values(by='count',ascending = False).head(20)
 
         return df
     #word counts for each user
@@ -74,9 +75,6 @@ def users_word_count(username1, username2, text_type='tags'):
 
     return df
 
-# def process_text(str):
-
-
 def get_tags_csv(df):
     """Save tags dataframe to .csv"""
     return df.to_csv(path_or_buf=r'static/tags.csv', header=False, index=False)
@@ -97,9 +95,38 @@ def get_match_score(df):
     match_score = float(sum_of_common) / float(sum_of_individual)
     return '{0:.2f}%'.format(match_score*100)
 
-def get_text_ls(file):
-    """return a list of tags by common users"""
-    pd.read_csv(file, )
+def get_tag_lst():
+    """Return a list of tags used by both users.
+    If no common tags, return the top 5 by count. 
+    """
+    df = pd.read_csv('static/tags.csv', header=None, names=['word', 'count', 'user'])
+    df_common = df[df['user'] == 'common']
+
+    if df_common['count'].isnull().sum() == 0:
+        df_top = df.sort_values(by= 'count', ascending=False).head(5)
+        tag_lst = df_top['word'].tolist()
+    else:
+        tag_lst = df_common['word'].tolist()
+
+    return tag_lst
+
+def get_text_lst():
+    """
+    Return a list of words used by both users used in title or description.
+    If no common words, return the top 5 by count.
+    """
+    df_title = pd.read_csv('static/title.csv', header=None, names=['word', 'count', 'user'])
+    df_description = pd.read_csv('static/description.csv', header=None, names=['word', 'count', 'user'])
+    df = pd.concat([df_title, df_description])
+    df_common = df[df['user'] == 'common']
+
+    if df_common['count'].isnull().sum() == 0:
+        df_top = df.sort_values(by= 'count', ascending=False).head(5)
+        text_lst = df_top['word'].tolist()
+    else:
+        text_lst = df_common['word'].tolist()
+
+    return text_lst
 
 def strip_punctuation (str):
     for p in list(punctuation):

@@ -76,24 +76,49 @@ def display_partial_view():
         df = word_count.users_word_count(username1, username2)
         word_count.get_tags_csv(df)
         match_score = word_count.get_match_score(df)
-        text_url = "static/tags.csv"
+        # text_url = "static/tags.csv"
 
     elif texttype == "title":
         df = word_count.users_word_count(username1, username2, text_type='title')
         word_count.get_title_csv(df)
         match_score = word_count.get_match_score(df)
-        text_url = "static/title.csv"
+        # text_url = "static/title.csv"
 
     elif texttype == "description":
         df = word_count.users_word_count(username1, username2, text_type='description')
         word_count.get_description_csv(df)
         match_score = word_count.get_match_score(df)
-        text_url = "static/description.csv"
+        # text_url = "static/description.csv"
 
-    result['texttype'] = text_url
+    tags = word_count.get_tag_lst()
+    text = word_count.get_text_lst()
+    photo_ids = request_api.recommendation_by_text(tags, text)
+
+    
+    urls = []
+    for photo_id in photo_ids:
+        urls.append(db.session.query(Photo.url).filter(Photo.photo_id == photo_id).first())
+
+    # result['text_url'] = text_url
     result['match'] = match_score
+    result['urls'] = urls
 
     return jsonify(result)
+
+# @app.route('/tags-bubble')
+# def display_rmd_photos():
+#     """
+#     Display recommended photos.
+#     """
+#     tags = word_count.get_tag_lst()
+#     text = word_count.get_text_lst()
+#     photo_ids = request_api.recommendation_by_text(tags, text)
+#     urls = []
+#     for photo_id in photo_ids:
+#         # urls.append(db.session.query(Photo.url).get(photo_id).first())
+#         db.session.query(Photo.url).filter(Photo.photo_id == '25174064667').first()
+    
+#     return render_template('rmd-img.html', urls=urls)
 
 
 if __name__ == "__main__":

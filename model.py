@@ -99,10 +99,9 @@ if __name__ == "__main__":
     # So that we can use Flask-SQLAlchemy, we'll make a Flask app.
     # app = Flask(__name__)
 
-    # from server import app
+    from server import app
     connect_to_db(app)
     db.create_all()
     print "Connected to DB."
 
-    # db.session.close()
 

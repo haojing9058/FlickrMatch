@@ -51,7 +51,7 @@ def seed_photos_by_userid(user_id, sort='interesting', per_page=30):
     params = base_params()
     params['method'] = "flickr.photos.getPopular"
     params['user_id'] = user_id
-    params['sort'] = sort
+    params['sort'] = 'date-posted-desc'
     params['extras'] =','.join(['description','data_upload', 'date_taken', 'owner_name', 
     'last_update', 'geo', 'tags', 'views', 'media', 'url_sq'])
     params['per_page'] = per_page
@@ -98,8 +98,9 @@ def recommendation_by_text(tags, text, per_page=24):
     params = base_params()
     params['method'] = "flickr.photos.search"
     params['tags'] = tags
+    params['tag_mode'] = 'any'
     params['text'] = text
-    params['sort'] = 'relevance'
+    params['sort'] = ''
     params['content_type'] = 1
     # params['machine_tags']
     # params['machine_tags_mode']
@@ -110,8 +111,8 @@ def recommendation_by_text(tags, text, per_page=24):
 
     photos = response['photos']['photo'] #a list of photos
 
-    for p in photos:
-        photo_ids = []
+    photo_ids = []
+    for p in photos:     
         photo_id = p['id'].encode('utf-8')
         photo_ids.append(photo_id)
         if db.session.query(Photo).get(photo_id) is None:
@@ -130,123 +131,6 @@ def recommendation_by_text(tags, text, per_page=24):
 if __name__ == "__main__":
     from flask import Flask
     app = Flask(__name__)
+
     connect_to_db(app)
-
-
-# def get_user_by_username (username):
-#     """Get a user's info frm Flickr given a username"""
-
-#     # Get Flickr user_id from Flickr given a username.
-#     params_find_by_username = base_params()
-#     params_find_by_username['method'] = "flickr.people.findByUsername"
-#     params_find_by_username['username'] = username
-#     response_username = requests.get(API_URL, params=params_find_by_username).json()
-#     user_id = response_username['user']['nsid'].encode('utf-8')
-
-#     # Get the user's info given the Flickr user_id
-#     params_get_user_info = base_params()
-#     params_get_user_info['method'] = "flickr.people.getInfo"
-#     params_get_user_info['user_id'] = user_id
-#     response_userinfo = requests.get(API_URL, params=params_get_user_info).json()
-
-#     person = response_userinfo['person']
-#     photos = person['photos']
-
-#     # realname = person['realname']['_content']
-#     if person.get('location'):
-#         user_location = person['location']['_content'].encode('utf-8')
-#     else:
-#         user_location = None
-#     photo_count = photos['count']['_content']
-#     photo_since = datetime.datetime.fromtimestamp(int(photos['firstdate']['_content'])).strftime('%Y-%m-%d %H:%M:%S')
-
-#     profile_url = person['profileurl']['_content'].encode('utf-8')
-
-#     return User(user_id=user_id, username=username, user_location=user_location, 
-#         photo_count=photo_count, photo_since=photo_since,
-#         profile_url=profile_url)
-
-# def get_photos_by_userid(user_id, sort='interesting', per_page=9):
-#     """
-#     Get the most popular photos given a user_id.
-#     sort: One of faves, views, comments or interesting. Deafults to interesting.
-#     per_page: The maximum allowed value is 500.
-#     """
-
-#     params = base_params()
-#     params['method'] = "flickr.photos.getPopular"
-#     params['user_id'] = user_id
-#     params['sort'] = sort
-#     params['per_page'] = per_page
-#     response = requests.get(API_URL, params=params).json()
-
-#     # return a list of photos (photo_id) 
-#     photo_ids = []
-#     for i in response['photos']['photo']:
-#         photo_ids.append(i['id'].encode('utf-8'))
-
-#     return photo_ids
-#     # Best nine to be displayed on webpage, more for text processing.
-
-
-# def get_photo_by_photoid(photo_id):
-#     """return the photo info givin photo_id"""
-
-#     params = base_params()
-#     params['method'] = "flickr.photos.getInfo"
-#     params['photo_id'] = photo_id
-#     response = requests.get(API_URL, params=params).json()
-
-#     photo = response['photo']
-
-#     secret_id = photo['secret'].encode('utf-8')
-#     server_id = photo['server'].encode('utf-8')
-#     farm_id = photo['farm']
-#     img_url = 'https://farm' + str(farm_id) + '.staticflickr.com/' + server_id + '/' + photo_id + '_' + secret_id + '_s.jpg'
-
-#     user_id = photo['owner']['nsid'].encode('utf-8')
-#     title = photo['title']['_content'].encode('utf-8')
-#     description = photo['description']['_content'].encode('utf-8')
-#     tags = []
-#     #use raw_tag or tag? 
-#     for i in photo['tags']['tag']:
-#         # tags.append(i['raw'])
-#         tags.append(i['_content'].encode('utf-8'))
-
-#     date = photo['dates']
-#     #fix the datetime format
-#     date_posted = datetime.datetime.fromtimestamp(int(date['posted'])).strftime('%Y-%m-%d %H:%M:%S')
-#     # date_posted = date['posted']
-#     date_taken = date['taken'].encode('utf-8')
-
-#     #geographic
-#     if photo.get('location'):
-#         location = photo['location']
-#         country = location['country']['_content'].encode('utf-8')
-#         place_id = location['place_id'].encode('utf-8')
-#         lat = location['latitude'].encode('utf-8')
-#         lon = location['longitude'].encode('utf-8')
-#     else:
-#         country = None
-#         place_id = None
-#         lat = None
-#         lon = None
-
-#     url = photo['urls']['url'][0]['_content'].encode('utf-8')
-#     #type = photo['urls']['url'][0]['type']
-#     #'photopage'
-
-#     return Photo(photo_id=photo_id, user_id=user_id, title=title, 
-#         description=description, tags=tags, date_posted=date_posted,
-#         date_taken=date_taken, country=country, place_id=place_id,
-#         lat=lat, lon=lon, url=url, img_url=img_url)
-
-
-
-
-
-
-
-
-
 
