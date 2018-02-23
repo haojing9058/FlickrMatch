@@ -42,29 +42,6 @@
         console.log("here");
       $("#users").submit();
 
-        // var userInputs = {
-        // "username1": $("#username1").val(),
-        // "username2": $("#username2").val(),}; 
-        // $.post("/user-photos", userInputs, function(results){
-        //   console.log(results);
-
-          // var url_list1 = results.url_list1;
-          // var url_list2 = results.url_list2;
-          // var text1 = "";
-          // var i;
-          // for(i = 0; i < url_list1.length; i++){
-          //   text1 += "<img src=" + url_list1[i] + "></img>";
-          // }
-          // $('#photos-user1').html(text1);
-
-          // var j;
-          // var text2 = "";
-          // for(i = 0; i < url_list2.length; i++){
-          //   text2 += "<img src=" + url_list2[i] + "></img>";
-          // }
-          // $('#photos-user2').html(text2);
-
-          // $('#users').hide();
         }
       }
   
@@ -79,6 +56,30 @@
   }
 
   $("#test").on("click", submitUsername);
+
+// var userInputs = {
+// "username1": $("#username1").val(),
+// "username2": $("#username2").val(),}; 
+// $.post("/user-photos", userInputs, function(results){
+//   console.log(results);
+
+  // var url_list1 = results.url_list1;
+  // var url_list2 = results.url_list2;
+  // var text1 = "";
+  // var i;
+  // for(i = 0; i < url_list1.length; i++){
+  //   text1 += "<img src=" + url_list1[i] + "></img>";
+  // }
+  // $('#photos-user1').html(text1);
+
+  // var j;
+  // var text2 = "";
+  // for(i = 0; i < url_list2.length; i++){
+  //   text2 += "<img src=" + url_list2[i] + "></img>";
+  // }
+  // $('#photos-user2').html(text2);
+
+          // $('#users').hide();
 
 </script>
 {% endblock %}

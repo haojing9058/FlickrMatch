@@ -36,27 +36,34 @@ def users_word_count(username1, username2, text_type='tags'):
         # what if user do not use tags??
         #get a list of strings
         str_lst = [e for l in raw_data for e in l]
-
+        #lower case and strip punctuations of a string
         str_lst_new = map(strip_punctuation, str_lst)
 
         word_lst = [w for sentence in str_lst_new if sentence for w in sentence.split()]
-        #lower case and strip punctuations of a string
-        #remove stop words
-        filtered_words = [w for w in word_lst if not w in UNWANTED_WORDS]
-        #get word count dictionary
-        counts = Counter(filtered_words)
-        #convert dict to dataframe
-        df = pd.DataFrame.from_dict(counts, orient='index').reset_index()
-        #add "user" column to the dataframe
-        df['user'] = pd.Series(username, index=df.index)
-        #rename columns
-        df.rename(columns={'index':'word', 0:'count', 'user':'user'}, inplace=True)
-        #drop rows if word length is over 15
-        df = df[df['word'].apply(lambda x: len(x) < 15)]
-        #sort and select top 20
-        df = df.sort_values(by='count',ascending = False).head(20)
+        if word_lst:
+            #remove stop words
+            filtered_words = [w for w in word_lst if not w in UNWANTED_WORDS]
+            #get word count dictionary
+            counts = Counter(filtered_words)
+            #convert dict to dataframe
+            df = pd.DataFrame.from_dict(counts, orient='index').reset_index()
+            #add "user" column to the dataframe
+            df['user'] = pd.Series(username, index=df.index)
+            #rename columns
+            df.rename(columns={'index':'word', 0:'count', 'user':'user'}, inplace=True)
+            #drop rows if word length is over 15
+            df = df[df['word'].apply(lambda x: len(x) < 15)]
+            #sort and select top 20
+            df_new = df.sort_values(by='count',ascending = False).head(20)
 
-        return df
+            return df_new
+
+        else:
+            empty_df = pd.DataFrame(columns=['word', 'count', 'user'])
+            empty_df['user'] = pd.Series(username)
+
+            return empty_df
+
     #word counts for each user
     words1 = count_word(username1, text_type)
     words2 = count_word(username2, text_type)

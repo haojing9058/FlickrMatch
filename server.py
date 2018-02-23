@@ -34,26 +34,26 @@ def check_username():
     return jsonify(check)
 
 
-@app.route('/user-photos', methods=['POST'])
-def display_bestnine():
-    username1 = request.form.get('username1')
-    username2 = request.form.get('username2')
-    photos = {}
-    def helper(username):
-        """helper function to get the top 9 photo"""
-        #get user id from Flickr api
-        user = request_api.get_userid_by_username(username)
-        #get photo detail data from api and save to db
-        request_api.seed_photos_by_userid(user.user_id)
-        #select 9 photos from db
-        url_list = db.session.query(Photo.url).filter(Photo.username == username).limit(9).all()
-        # flat result to a list
-        return [e for l in url_list for e in l]
+# @app.route('/user-photos', methods=['POST'])
+# def display_bestnine():
+#     username1 = request.form.get('username1')
+#     username2 = request.form.get('username2')
+#     photos = {}
+#     def helper(username):
+#         """helper function to get the top 9 photo"""
+#         #get user id from Flickr api
+#         user = request_api.get_userid_by_username(username)
+#         #get photo detail data from api and save to db
+#         request_api.seed_photos_by_userid(user.user_id)
+#         #select 9 photos from db
+#         url_list = db.session.query(Photo.url).filter(Photo.username == username).limit(9).all()
+#         # flat result to a list
+#         return [e for l in url_list for e in l]
 
-    photos['url_list1'] = helper(username1)
-    photos['url_list2'] = helper(username2)
+#     photos['url_list1'] = helper(username1)
+#     photos['url_list2'] = helper(username2)
 
-    return jsonify(photos)
+#     return jsonify(photos)
 
 @app.route('/userinfo', methods=['POST'])
 def display_userinfo():
@@ -137,6 +137,8 @@ def display_partial_view():
 
     return jsonify(result)
 
+
+
 # @app.route('/tags-bubble')
 # def display_rmd_photos():
 #     """
@@ -151,6 +153,11 @@ def display_partial_view():
 #         db.session.query(Photo.url).filter(Photo.photo_id == '25174064667').first()
     
 #     return render_template('rmd-img.html', urls=urls)
+
+@app.route('/geo')
+def display_map():
+
+    return render_template('geo.html')
 
 
 if __name__ == "__main__":
