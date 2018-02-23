@@ -31,10 +31,12 @@ def get_userid_by_username(username):
         params_find_by_username['method'] = "flickr.people.findByUsername"
         params_find_by_username['username'] = username
         response_username = requests.get(API_URL, params=params_find_by_username).json()
-        user_id = response_username['user']['nsid'].encode('utf-8')
-
-        user = User(user_id=user_id, username=username)
-        db_utils.create_user(user)
+        if response_username['stat'] == 'fail':
+            return response_username['stat']
+        else:
+            user_id = response_username['user']['nsid'].encode('utf-8')
+            user = User(user_id=user_id, username=username)
+            db_utils.create_user(user)
 
     else:
         user = db.session.query(User).filter(User.username == username).one()
@@ -100,7 +102,7 @@ def recommendation_by_text(tags, text, per_page=24):
     params['tags'] = tags
     params['tag_mode'] = 'any'
     params['text'] = text
-    params['sort'] = ''
+    params['sort'] = 'interestingness-desc'
     params['content_type'] = 1
     # params['machine_tags']
     # params['machine_tags_mode']

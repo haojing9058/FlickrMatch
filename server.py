@@ -10,11 +10,50 @@ app = Flask(__name__)
 app.secret_key = '\xf5\xf8\xb0t\x02\xdf\xd5\x7f\xbe1$P\xb4\xed\xfc k\xd4:\xa4\x96\x852h' 
 app.jinja_env.undefined = StrictUndefined
 
-@app.route('/')
+@app.route('/', methods=['GET'])
 def index():
     """Homepage."""
     return render_template('homepage.html')
 
+
+@app.route('/user-check', methods=['POST'])
+def check_username():
+    """check if username valid from Flickr."""
+    username1 = request.form.get('username1')
+    username2 = request.form.get('username2')
+    check = {}
+    # #get user id from Flickr api
+    def helper(username):
+        user = request_api.get_userid_by_username(username)
+        if user == 'fail':
+            return 'fail'
+
+    check['username1_ck'] = helper(username1)
+    check['username2_ck'] = helper(username2)
+
+    return jsonify(check)
+
+
+@app.route('/user-photos', methods=['POST'])
+def display_bestnine():
+    username1 = request.form.get('username1')
+    username2 = request.form.get('username2')
+    photos = {}
+    def helper(username):
+        """helper function to get the top 9 photo"""
+        #get user id from Flickr api
+        user = request_api.get_userid_by_username(username)
+        #get photo detail data from api and save to db
+        request_api.seed_photos_by_userid(user.user_id)
+        #select 9 photos from db
+        url_list = db.session.query(Photo.url).filter(Photo.username == username).limit(9).all()
+        # flat result to a list
+        return [e for l in url_list for e in l]
+
+    photos['url_list1'] = helper(username1)
+    photos['url_list2'] = helper(username2)
+
+    return jsonify(photos)
 
 @app.route('/userinfo', methods=['POST'])
 def display_userinfo():
@@ -24,7 +63,7 @@ def display_userinfo():
     
     def helper(username):
         """helper function to get the top 9 photo"""
-            #get user id from Flickr api
+        #get user id from Flickr api
         user = request_api.get_userid_by_username(username)
         #get photo detail data from api and save to db
         request_api.seed_photos_by_userid(user.user_id)
@@ -51,15 +90,15 @@ def display_tags_bubble():
     username1 = request.args.get('username1')
     username2 = request.args.get('username2')
 
-    df = word_count.users_word_count(username1, username2)
-    word_count.get_tags_csv(df)
-    match_score = word_count.get_match_score(df)
+    df_tags = word_count.users_word_count(username1, username2)
+    word_count.get_tags_csv(df_tags)
+    match_tags = word_count.get_match_score(df_tags)
     # text_url = "static/tags.csv"
 
     return render_template('bubble-page.html', 
                             username1 = username1,
                             username2 = username2,
-                            match_score=match_score)
+                            match_tags=match_tags)
 
    
 @app.route('/tags-bubble', methods=["POST"])
@@ -67,28 +106,23 @@ def display_partial_view():
     """Display bubble graph;
     display match score
     """
-    texttype = request.form.get('texttype') #get from dropdown menu
+    # texttype = request.form.get('texttype') #get from dropdown menu
     username1 = request.form.get('username1')
     username2 = request.form.get('username2')
     result = {}
 
-    if texttype == "tags":
-        df = word_count.users_word_count(username1, username2)
-        word_count.get_tags_csv(df)
-        match_score = word_count.get_match_score(df)
-        # text_url = "static/tags.csv"
+    df_tags = word_count.users_word_count(username1, username2)
+    # word_count.get_tags_csv(df_tags)
+    result['match_tags'] = word_count.get_match_score(df_tags)
 
-    elif texttype == "title":
-        df = word_count.users_word_count(username1, username2, text_type='title')
-        word_count.get_title_csv(df)
-        match_score = word_count.get_match_score(df)
-        # text_url = "static/title.csv"
+    df_title = word_count.users_word_count(username1, username2, text_type='title')
+    word_count.get_title_csv(df_title)
+    result['match_title'] = word_count.get_match_score(df_title)
 
-    elif texttype == "description":
-        df = word_count.users_word_count(username1, username2, text_type='description')
-        word_count.get_description_csv(df)
-        match_score = word_count.get_match_score(df)
-        # text_url = "static/description.csv"
+    df_description = word_count.users_word_count(username1, username2, text_type='description')
+    word_count.get_description_csv(df_title)
+    result['match_description'] = word_count.get_match_score(df_description)
+
 
     tags = word_count.get_tag_lst()
     text = word_count.get_text_lst()
@@ -99,8 +133,6 @@ def display_partial_view():
     for photo_id in photo_ids:
         urls.append(db.session.query(Photo.url).filter(Photo.photo_id == photo_id).first())
 
-    # result['text_url'] = text_url
-    result['match'] = match_score
     result['urls'] = urls
 
     return jsonify(result)

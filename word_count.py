@@ -8,9 +8,16 @@ from collections import Counter
 from model import User, Photo
 from model import connect_to_db, db
 
-STOP_WORDS = set(stopwords.words('english'))
-SOCIAL_WORDS = set(['facebook', 'instagram', 'thanks', 'follow', 'share',
-            'please', 'page', 'visit', 'thanks', 'feel'])
+UNWANTED_WORDS = set(stopwords.words('english')).union(set(['facebook', 'instagram', 'thanks', 'follow', 'share',
+            'please', 'page', 'visit', 'thanks', 'feel', 'like', 'ig', 'image', 'also']))
+
+def strip_punctuation (str):
+    if not str:
+        return str
+    else:
+        for p in list(punctuation):
+            str = str.lower().replace(p, '')
+    return str
 
 def users_word_count(username1, username2, text_type='tags'):
     """Return certain text_type of word counts for each user and their common word counts"""
@@ -28,26 +35,26 @@ def users_word_count(username1, username2, text_type='tags'):
             raw_data = db.session.query(Photo.description).filter(Photo.username == username).all()
         # what if user do not use tags??
         #get a list of strings
-        if raw_data:
-            str_lst = [e for l in raw_data for e in l]
-            #lower case and strip punctuations of a string
-            str_lst_new = map(strip_punctuation, str_lst)
-            #get a list of words
-            word_ls = [w for sentence in str_lst_new for w in sentence.split()]
-            #remove stop words
-            filtered_words = [w for w in word_ls if not w in STOP_WORDS and SOCIAL_WORDS]
-            #get word count dictionary
-            counts = Counter(filtered_words)
-            #convert dict to dataframe
-            df = pd.DataFrame.from_dict(counts, orient='index').reset_index()
-            #add "user" column to the dataframe
-            df['user'] = pd.Series(username, index=df.index)
-            #rename columns
-            df.rename(columns={'index':'word', 0:'count', 'user':'user'}, inplace=True)
-            #drop rows if word length is over 15
-            df = df[df['word'].apply(lambda x: len(x) < 15)]
-            #sort and select top 20
-            df = df.sort_values(by='count',ascending = False).head(20)
+        str_lst = [e for l in raw_data for e in l]
+
+        str_lst_new = map(strip_punctuation, str_lst)
+
+        word_lst = [w for sentence in str_lst_new if sentence for w in sentence.split()]
+        #lower case and strip punctuations of a string
+        #remove stop words
+        filtered_words = [w for w in word_lst if not w in UNWANTED_WORDS]
+        #get word count dictionary
+        counts = Counter(filtered_words)
+        #convert dict to dataframe
+        df = pd.DataFrame.from_dict(counts, orient='index').reset_index()
+        #add "user" column to the dataframe
+        df['user'] = pd.Series(username, index=df.index)
+        #rename columns
+        df.rename(columns={'index':'word', 0:'count', 'user':'user'}, inplace=True)
+        #drop rows if word length is over 15
+        df = df[df['word'].apply(lambda x: len(x) < 15)]
+        #sort and select top 20
+        df = df.sort_values(by='count',ascending = False).head(20)
 
         return df
     #word counts for each user
@@ -77,15 +84,15 @@ def users_word_count(username1, username2, text_type='tags'):
 
 def get_tags_csv(df):
     """Save tags dataframe to .csv"""
-    return df.to_csv(path_or_buf=r'static/tags.csv', header=False, index=False)
+    return df.to_csv(path_or_buf=r'static/tags.csv', header=False, index=False, encoding='utf-8')
 
 def get_title_csv(df):
     """Save title dataframe to .csv"""
-    return df.to_csv(path_or_buf=r'static/title.csv', header=False, index=False)
+    return df.to_csv(path_or_buf=r'static/title.csv', header=False, index=False, encoding='utf-8')
 
 def get_description_csv(df):
     """Save title dataframe to .csv"""
-    return df.to_csv(path_or_buf=r'static/description.csv', header=False, index=False)
+    return df.to_csv(path_or_buf=r'static/description.csv', header=False, index=False, encoding='utf-8')
 
 def get_match_score(df):
     """ Calculate match score given the "word, count, user" df.
@@ -128,10 +135,7 @@ def get_text_lst():
 
     return text_lst
 
-def strip_punctuation (str):
-    for p in list(punctuation):
-        str = str.lower().replace(p, '')
-    return str
+
 
 if __name__ == "__main__":
     from flask import Flask, request, session

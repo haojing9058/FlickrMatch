@@ -1,16 +1,84 @@
 {% extends 'base.html' %}
 {% block content%}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
 <h1>Flickrgram</h1>
 
-<form action="/userinfo", method="POST">
+<form id="users" action="/userinfo" method="POST">
   <div>
-    Username 1: <input type="text" name="username1">
+    Username 1: <input id="username1" type="text" name="username1">
   </div>
   <div>
-    Username 2: <input type="text" name="username2">
+    Username 2: <input id="username2" type="text" name="username2">
   </div>
-  <input type="submit" name="submit">
+  <input id="test" type="submit" value="submit">
 </form> 
 
+<!-- <div><input id="next" type="submit" value="next"></div> -->
+
+<div id="username1"></div>
+<div id="photos-user1"></div>
+<div id="username2"></div>
+<div id="photos-user2"></div>
+
+<script>
+  function showSubmition(results){
+
+      if (results.username1_ck == 'fail'){
+        alert("Invalid username 1, please try again!"); 
+        window.location.replace('/');
+      }
+
+      else if (results.username2_ck == 'fail'){
+        alert("Invalid username 2, please try again!"); 
+        window.location.replace('/');
+      }
+
+      else if (results.username1_ck == 'fail' & results.username2_ck == 'fail'){
+        alert("Invalid username 1 and username 2, please try again!");
+      }
+
+      else {
+        console.log("here");
+      $("#users").submit();
+
+        // var userInputs = {
+        // "username1": $("#username1").val(),
+        // "username2": $("#username2").val(),}; 
+        // $.post("/user-photos", userInputs, function(results){
+        //   console.log(results);
+
+          // var url_list1 = results.url_list1;
+          // var url_list2 = results.url_list2;
+          // var text1 = "";
+          // var i;
+          // for(i = 0; i < url_list1.length; i++){
+          //   text1 += "<img src=" + url_list1[i] + "></img>";
+          // }
+          // $('#photos-user1').html(text1);
+
+          // var j;
+          // var text2 = "";
+          // for(i = 0; i < url_list2.length; i++){
+          //   text2 += "<img src=" + url_list2[i] + "></img>";
+          // }
+          // $('#photos-user2').html(text2);
+
+          // $('#users').hide();
+        }
+      }
+  
+
+  function submitUsername(evt){
+    evt.preventDefault();
+    var formInputs = {
+        "username1": $("#username1").val(),
+        "username2": $("#username2").val(),
+    };
+    $.post("/user-check", formInputs, showSubmition);
+  }
+
+  $("#test").on("click", submitUsername);
+
+</script>
 {% endblock %}

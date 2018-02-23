@@ -32,9 +32,9 @@
   <div id='matchScore' 
   data-username1='{{ username1 }}' 
   data-username2= '{{ username2 }}' 
-  data-matchscore='{{ match_score}}'>
+  data-matchscore='{{ match_tags}}'>
   </div>
-  <div id='match'><h3>{{ username1 }} and {{ username2}} is {{ match_score }} MATCH in photo tags!</h3></div>
+  <div id='match'><h3>{{ username1 }} and {{ username2}} is {{ match_tags }} MATCH in photo tags!</h3></div>
   <div>
     <select id='text-source' name='text-source'>
       <option value='tags'>Photo Tags</option>
@@ -59,9 +59,9 @@
     url = '/tags-bubble';
 
     if ($('#text-source').val() == 'tags') {
-      $.post(url, {'texttype': 'tags', 'username1': username1,'username2': username2}, function(results){
+      $.post(url, {'username1': username1,'username2': username2}, function(results){
         // console.log(results)
-        var matchscore = results.match;
+        var matchscore = results.match_tags;
         $('#match').html('<h3>' + username1 + ' and ' + username2 + ' is ' + matchscore  +' MATCH in photo tags!' + '</h3>');
         d3.select("svg").remove();
         updateTags();
@@ -69,8 +69,8 @@
     }
 
     if ($('#text-source').val() == 'title') {
-      $.post(url, {'texttype': 'title', 'username1': username1,'username2': username2},function(results){
-        var matchscore = results.match;
+      $.post(url, {'username1': username1,'username2': username2},function(results){
+        var matchscore = results.match_title;
         $('#match').html('<h3>' + username1 + ' and ' + username2 + ' is ' + matchscore  +' MATCH in photo tags!' + '</h3>');
         d3.select("svg").remove();
         updateTitle();
@@ -78,8 +78,9 @@
     }
 
     if ($('#text-source').val() == 'description') {
-      $.post(url, {'texttype': 'description', 'username1': username1,'username2': username2}, function(results){
-        var matchscore = results.match;
+      $.post(url, {'username1': username1,'username2': username2
+        }, function(results){
+        var matchscore = results.match_description;
         $('#match').html('<h3>' + username1 + ' and ' + username2 + ' is ' + matchscore  +' MATCH in photo tags!' + '</h3>');
         d3.select("svg").remove();
         updateDescription();
@@ -93,13 +94,14 @@
     url = '/tags-bubble';
     username1 = $('#matchScore').data('username1');
     username2 = $('#matchScore').data('username2');
-    $.post(url, {'username1': username1, 'username2': username2, 'texttype': "tags"},
+    $.post(url, {'username1': username1, 'username2': username2},
       function(results){
+        console.log(results)
         var urls = results.urls;
         var text = "";
         var i;
         for(i = 0; i < urls.length; i++){
-          text += "<img src='" + urls[i] + "'></img><br>";
+          text += "<img src='" + urls[i] + "'></img>";
         }
         $('#recommendation').html(text);
         $('button').hide();
@@ -299,6 +301,8 @@
   }
 
   updateTags(); 
+  console.log('run')
+  // updateDescription();
 
   function updateTitle() {
 
