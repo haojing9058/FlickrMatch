@@ -40,18 +40,13 @@ class Photo(db.Model):
     url = db.Column(db.String(200), nullable=False)
     date_taken = db.Column(db.DateTime)
     date_upload = db.Column(db.DateTime)
+    latitude = db.Column(db.String(12))
+    longitude = db.Column(db.String(12))
+    country_code = db.Column(db.String(2))
     place_id = db.Column(db.String(30))
     media = db.Column(db.String(10))
 
     users = db.relationship('User', backref=db.backref('photos'))
-
-# class Recommendated_Photo(db.Model):
-#     """Recommendated photos"""
-
-#     __tablename__ = 'recommendation'
-#     photo_id = db.Column(db.String(20), primary_key=True)
-#     url = db.Column(db.String(200), nullable=False)
-
 
 
 # class User(db.Model):

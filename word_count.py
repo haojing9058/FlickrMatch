@@ -142,6 +142,43 @@ def get_text_lst():
 
     return text_lst
 
+COUNTRY_CODE = pd.read_csv('static/countries_code.csv')
+COUNTRY_CODE.index = COUNTRY_CODE['country']
+# COUNTRY_CODE.drop(['country'], axis=1, inplace=True)
+TEMPLATE_DF = pd.DataFrame(columns=['latitude', 'longitude', '2010', '2011',
+    '2012', '2013', '2014', '2015', '2016', '2017', '2018', 'name'])
+TEMPLATE_DF.index.name = 'country_code'
+
+def geo(username):
+    #get a list of tuples
+    raw_data = db.session.query(Photo.photo_id, Photo.country_code, Photo.date_taken).filter(Photo.username == username).all()
+    #convert raw_data to dataframe
+    df = pd.DataFrame.from_records(raw_data, columns=['photo_id', 'country_code', 'date_taken'])
+    #drop rows with missing values
+    df.dropna(inplace=True)
+    #check if df is empty
+    if df.count == 0:
+        return TEMPLATE_DF
+    #extrat year and save as a new column
+    df['year'] = df['date_taken'].map(lambda x: x.year)
+    #select photos taken in or after 2010.
+    df = df[df['year'] >= 2010]
+    #group by country_code, year
+    group = df.groupby(by=['country_code', 'year']).size()
+    df_group = group.reset_index()
+    df_group.columns = ['country_code', 'year', 'count']
+    #year column to year rows
+    records_df = df_group.pivot_table('count', 'country_code', 'year')
+    #merge with TEMPLATE_DF
+    merged = records_df.merge(COUNTRY_CODE, left_index=True, right_index=True, how='left')
+    #concat with TEMPLATE_DF in order to have columns of all years in range
+    result = pd.concat([merged, TEMPLATE_DF])
+    return result
+
+def get_geo_csv(df):
+    return df.to_csv(path_or_buf=r'static/geo.csv', encoding='utf-8')
+
+
 
 
 if __name__ == "__main__":

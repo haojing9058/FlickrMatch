@@ -3,6 +3,7 @@ import json
 from pprint import pprint
 import os
 import datetime
+import reverse_geocoder as rg
 from model import User, Photo
 from model import connect_to_db, db
 import db_utils
@@ -31,7 +32,7 @@ def get_userid_by_username(username):
         params_find_by_username['method'] = "flickr.people.findByUsername"
         params_find_by_username['username'] = username
         response_username = requests.get(API_URL, params=params_find_by_username).json()
-        if response_username['stat'] == 'fail':
+        if response_username['stat'].encode('utf-8') == 'fail':
             return response_username['stat']
         else:
             user_id = response_username['user']['nsid'].encode('utf-8')
@@ -44,7 +45,7 @@ def get_userid_by_username(username):
     return user
 
 
-def seed_photos_by_userid(user_id, sort='interesting', per_page=30):
+def seed_photos_by_userid(user_id, sort='interesting', per_page=100):
     """
     Get photos given a user_id.
     sort: One of faves, views, comments or interesting.
@@ -71,19 +72,25 @@ def seed_photos_by_userid(user_id, sort='interesting', per_page=30):
             title = p['title'].encode('utf-8')
             views = p['views'].encode('utf-8')
             url = p['url_sq'].encode('utf-8')
+            #check if exist? 
             date_taken = p['datetaken'].encode('utf-8')
             date_upload = datetime.datetime.fromtimestamp(int(p['lastupdate'].encode('utf-8'))).strftime('%Y-%m-%d %H:%M:%S')
             media = p['media'].encode('utf-8')
-            # lat = p['latitude']
-            # lon = p['longitude']
             if p.get('place_id'):
                 place_id = p['place_id'].encode('utf-8')
+                lat = p['latitude'].encode('utf-8')
+                lon = p['longitude'].encode('utf-8')
+                country_code = rg.search((lat, lon))[0]['cc']
             else:
                 place_id = None
+                lat = None
+                lon = None
+                country_code = None
 
             photo = Photo(photo_id=photo_id, user_id=user_id, username=username,
             description=description, tags=tags, title=title, views=views,
-            url=url, date_taken=date_taken, date_upload=date_upload, place_id=place_id, media=media)
+            url=url, date_taken=date_taken, date_upload=date_upload, media=media,
+            place_id=place_id, latitude=lat, longitude=lon, country_code=country_code)
             
             db_utils.add_photo(photo)
         else:
@@ -129,6 +136,7 @@ def recommendation_by_text(tags, text, per_page=24):
             pass
 
     return photo_ids
+
 
 if __name__ == "__main__":
     from flask import Flask

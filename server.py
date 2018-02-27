@@ -18,7 +18,7 @@ def index():
 
 @app.route('/user-check', methods=['POST'])
 def check_username():
-    """check if username valid from Flickr."""
+    # """check if username valid from Flickr."""
     username1 = request.form.get('username1')
     username2 = request.form.get('username2')
     check = {}
@@ -34,30 +34,10 @@ def check_username():
     return jsonify(check)
 
 
-# @app.route('/user-photos', methods=['POST'])
-# def display_bestnine():
-#     username1 = request.form.get('username1')
-#     username2 = request.form.get('username2')
-#     photos = {}
-#     def helper(username):
-#         """helper function to get the top 9 photo"""
-#         #get user id from Flickr api
-#         user = request_api.get_userid_by_username(username)
-#         #get photo detail data from api and save to db
-#         request_api.seed_photos_by_userid(user.user_id)
-#         #select 9 photos from db
-#         url_list = db.session.query(Photo.url).filter(Photo.username == username).limit(9).all()
-#         # flat result to a list
-#         return [e for l in url_list for e in l]
-
-#     photos['url_list1'] = helper(username1)
-#     photos['url_list2'] = helper(username2)
-
-#     return jsonify(photos)
-
 @app.route('/userinfo', methods=['POST'])
 def display_userinfo():
     """User info page."""
+   
     username1 = request.form.get('username1')
     username2 = request.form.get('username2')
     
@@ -67,11 +47,13 @@ def display_userinfo():
         user = request_api.get_userid_by_username(username)
         #get photo detail data from api and save to db
         request_api.seed_photos_by_userid(user.user_id)
-        #select 9 photos from db
-        url_list = db.session.query(Photo.url).filter(Photo.username == username).limit(9).all()
+        #select 9 photos from db, get a list of tuples
+        url_list_tp = db.session.query(Photo.url).filter(Photo.username == username).limit(9).all()
         # flat result to a list
-        return [e for l in url_list for e in l]
+        url_list = [e for l in url_list_tp for e in l]
 
+        return url_list
+    # import pdb; pdb.set_trace()
     url_list1 = helper(username1)
     url_list2 = helper(username2)
 
@@ -138,6 +120,26 @@ def display_partial_view():
     return jsonify(result)
 
 
+# @app.route('/user-photos', methods=['POST'])
+# def display_bestnine():
+#     username1 = request.form.get('username1')
+#     username2 = request.form.get('username2')
+#     photos = {}
+#     def helper(username):
+#         """helper function to get the top 9 photo"""
+#         #get user id from Flickr api
+#         user = request_api.get_userid_by_username(username)
+#         #get photo detail data from api and save to db
+#         request_api.seed_photos_by_userid(user.user_id)
+#         #select 9 photos from db
+#         url_list = db.session.query(Photo.url).filter(Photo.username == username).limit(9).all()
+#         # flat result to a list
+#         return [e for l in url_list for e in l]
+
+#     photos['url_list1'] = helper(username1)
+#     photos['url_list2'] = helper(username2)
+
+#     return jsonify(photos)
 
 # @app.route('/tags-bubble')
 # def display_rmd_photos():
@@ -157,7 +159,7 @@ def display_partial_view():
 @app.route('/geo')
 def display_map():
 
-    return render_template('geo.html')
+    return render_template('map.html')
 
 
 if __name__ == "__main__":
