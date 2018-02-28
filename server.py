@@ -105,7 +105,7 @@ def display_partial_view():
     word_count.get_description_csv(df_title)
     result['match_description'] = word_count.get_match_score(df_description)
 
-
+    #below is for recommendatio
     tags = word_count.get_tag_lst()
     text = word_count.get_text_lst()
     photo_ids = request_api.recommendation_by_text(tags, text)
@@ -118,6 +118,33 @@ def display_partial_view():
     result['urls'] = urls
 
     return jsonify(result)
+
+
+@app.route('/geo')
+def display_map():
+    
+    username1 = request.args.get('username1')
+    username2 = request.args.get('username2')
+    word_count.get_geo_csv(word_count.geo(username1), 'static/geo1.csv')
+    word_count.get_geo_csv(word_count.geo(username2), 'static/geo2.csv')
+
+    return render_template('map.html', 
+                            username1=username1, 
+                            username2=username2)
+
+if __name__ == "__main__":
+    # We have to set debug=True here, since it has to be True at the
+    # point that we invoke the DebugToolbarExtension
+    app.debug = True
+    # make sure templates, etc. are not cached in debug mode
+    app.jinja_env.auto_reload = app.debug
+
+    connect_to_db(app)
+
+    # Use the DebugToolbar
+    DebugToolbarExtension(app)
+
+    app.run(port=5001, host='0.0.0.0')
 
 
 # @app.route('/user-photos', methods=['POST'])
@@ -155,24 +182,4 @@ def display_partial_view():
 #         db.session.query(Photo.url).filter(Photo.photo_id == '25174064667').first()
     
 #     return render_template('rmd-img.html', urls=urls)
-
-@app.route('/geo')
-def display_map():
-
-    return render_template('map.html')
-
-
-if __name__ == "__main__":
-    # We have to set debug=True here, since it has to be True at the
-    # point that we invoke the DebugToolbarExtension
-    app.debug = True
-    # make sure templates, etc. are not cached in debug mode
-    app.jinja_env.auto_reload = app.debug
-
-    connect_to_db(app)
-
-    # Use the DebugToolbar
-    DebugToolbarExtension(app)
-
-    app.run(port=5000, host='0.0.0.0')
 

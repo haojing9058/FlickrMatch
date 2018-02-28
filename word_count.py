@@ -171,12 +171,14 @@ def geo(username):
     records_df = df_group.pivot_table('count', 'country_code', 'year')
     #merge with TEMPLATE_DF
     merged = records_df.merge(COUNTRY_CODE, left_index=True, right_index=True, how='left')
+    #replace NaN with 0
+    merged.fillna(value=0, inplace=True)
     #concat with TEMPLATE_DF in order to have columns of all years in range
-    result = pd.concat([merged, TEMPLATE_DF])
-    return result
+    # result = pd.concat([merged, TEMPLATE_DF])
+    return merged
 
-def get_geo_csv(df):
-    return df.to_csv(path_or_buf=r'static/geo.csv', encoding='utf-8')
+def get_geo_csv(df, path):
+    return df.to_csv(path_or_buf=path, encoding='utf-8')
 
 
 
