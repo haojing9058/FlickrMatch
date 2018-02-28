@@ -145,8 +145,8 @@ def get_text_lst():
 COUNTRY_CODE = pd.read_csv('static/countries_code.csv')
 COUNTRY_CODE.index = COUNTRY_CODE['country']
 # COUNTRY_CODE.drop(['country'], axis=1, inplace=True)
-TEMPLATE_DF = pd.DataFrame(columns=['latitude', 'longitude', '2010', '2011',
-    '2012', '2013', '2014', '2015', '2016', '2017', '2018', 'name'])
+TEMPLATE_DF = pd.DataFrame(columns=['latitude', 'longitude', 2011, 2012, 2013, 
+    2014, 2015, 2016, 2017, 2018, 'country_name', 'user'])
 TEMPLATE_DF.index.name = 'country_code'
 
 def geo(username):
@@ -171,14 +171,19 @@ def geo(username):
     records_df = df_group.pivot_table('count', 'country_code', 'year')
     #merge with TEMPLATE_DF
     merged = records_df.merge(COUNTRY_CODE, left_index=True, right_index=True, how='left')
+    #get user column
+    merged['user'] = pd.Series(username, index=merged.index)
+    # concat with TEMPLATE_DF in order to have columns of all years in range
+    concat = merged.merge(TEMPLATE_DF, how='outer')
+    # resorder column based on column names
+    result = concat.reindex(sorted(concat.columns), axis=1)
     #replace NaN with 0
-    merged.fillna(value=0, inplace=True)
-    #concat with TEMPLATE_DF in order to have columns of all years in range
-    # result = pd.concat([merged, TEMPLATE_DF])
-    return merged
+    result.fillna(value=0, inplace=True)
+    return result
 
-def get_geo_csv(df, path):
-    return df.to_csv(path_or_buf=path, encoding='utf-8')
+def get_geo_csv(df1, df2, path):
+    new = pd.concat([df1, df2])
+    return new.to_csv(path_or_buf=path, encoding='utf-8')
 
 
 
