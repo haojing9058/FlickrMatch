@@ -125,10 +125,9 @@ def display_map():
     
     username1 = request.args.get('username1')
     username2 = request.args.get('username2')
-    word_count.get_geo_csv(word_count.geo(username1), 'static/geo1.csv')
-    word_count.get_geo_csv(word_count.geo(username2), 'static/geo2.csv')
+    word_count.get_geo_csv(word_count.geo(username1), word_count.geo(username2), 'static/geo.csv')
 
-    return render_template('map.html', 
+    return render_template('map.html',
                             username1=username1, 
                             username2=username2)
 
@@ -144,7 +143,7 @@ if __name__ == "__main__":
     # Use the DebugToolbar
     DebugToolbarExtension(app)
 
-    app.run(port=5001, host='0.0.0.0')
+    app.run(port=5000, host='0.0.0.0')
 
 
 # @app.route('/user-photos', methods=['POST'])

@@ -3,6 +3,7 @@ import json
 from pprint import pprint
 import os
 import datetime
+import reverse_geocoder as rg
 from model import User, Photo
 from model import connect_to_db, db
 import db_utils
@@ -47,18 +48,17 @@ def get_userid_by_username(username):
 def seed_photos_by_userid(user_id, sort='interesting', per_page=100):
     """
     Get photos given a user_id.
-    sort: One of faves, views, comments or interesting.
-    per_page: The maximum allowed value is 500.
+    sort: faves, views, comments or interesting.
+    per_page: The maximum value is 500.
     """
     params = base_params()
     params['method'] = "flickr.photos.getPopular"
     params['user_id'] = user_id
-    params['sort'] = 'date-posted-desc'
-    params['extras'] =','.join(['description','data_upload', 'date_taken', 'owner_name', 
-    'last_update', 'geo', 'tags', 'views', 'media', 'url_sq'])
+    params['sort'] = 'interesting'
+    params['extras'] =','.join(['description','date_taken', 'owner_name', 'geo', 
+        'tags', 'url_sq'])
     params['per_page'] = per_page
     response = requests.get(API_URL, params=params).json()
-
     photos = response['photos']['photo']
     for p in photos:
         photo_id = p['id'].encode('utf-8')
@@ -69,21 +69,19 @@ def seed_photos_by_userid(user_id, sort='interesting', per_page=100):
             description = p['description']['_content'].encode('utf-8')
             tags = p['tags'].encode('utf-8')
             title = p['title'].encode('utf-8')
-            views = p['views'].encode('utf-8')
             url = p['url_sq'].encode('utf-8')
             date_taken = p['datetaken'].encode('utf-8')
-            date_upload = datetime.datetime.fromtimestamp(int(p['lastupdate'].encode('utf-8'))).strftime('%Y-%m-%d %H:%M:%S')
-            media = p['media'].encode('utf-8')
             lat = p['latitude']
             lon = p['longitude']
-            if p.get('place_id'):
-                place_id = p['place_id'].encode('utf-8')
-            else:
-                place_id = None
+            country_code = rg.search((lat, lon))[0]['cc']
+            # if p.get('place_id'):
+            #     place_id = p['place_id'].encode('utf-8')
+            # else:
+            #     place_id = None
 
             photo = Photo(photo_id=photo_id, user_id=user_id, username=username,
-            description=description, tags=tags, title=title, views=views,
-            url=url, date_taken=date_taken, date_upload=date_upload, place_id=place_id, media=media)
+            description=description, tags=tags, title=title, url=url, 
+            date_taken=date_taken, lat=lat, lon=lon, country_code=country_code)
             
             db_utils.add_photo(photo)
         else:
@@ -91,7 +89,7 @@ def seed_photos_by_userid(user_id, sort='interesting', per_page=100):
 
 # get recommendated photos based on text info
 # tags, tag_mode, text, sort, content_type=1, machine_tags, media='photo', per_page=et
-def recommendation_by_text(tags, text, per_page=24):
+def recommendation_by_text(tags, text, per_page=36):
     """Get most relavent photos based on given text info(tags, title and description)
     tags: a comma-delimited list of tags
     text: list of words
@@ -113,15 +111,77 @@ def recommendation_by_text(tags, text, per_page=24):
 
     photos = response['photos']['photo'] #a list of photos
 
+
+    photo_ids = []
+    for p in photos:     
+        photo_id = p['id'].encode('utf-8')
+        photo_ids.append(photo_id)
+
+        if db.session.query(Photo).get(photo_id) is None:
+            user_id = p['owner'].encode('utf-8')
+            username = p['ownername'].encode('utf-8')
+            description = p['description']['_content'].encode('utf-8')
+            tags = p['tags'].encode('utf-8')
+            title = p['title'].encode('utf-8')
+            url = p['url_sq'].encode('utf-8')
+            date_taken = p['datetaken'].encode('utf-8')
+            lat = p['latitude']
+            lon = p['longitude']
+            country_code = rg.search((lat, lon))[0]['cc']
+
+            photo = Photo(photo_id=photo_id, user_id=user_id, username=username,
+            description=description, tags=tags, title=title, url=url, 
+            date_taken=date_taken, lat=lat, lon=lon, country_code=country_code)
+
+            db_utils.add_photo(photo)
+
+
+        else:
+            pass
+
+    return photo_ids
+
+
+def recommendation_by_geo(lat, lon, per_page=36):
+    """Get most relavent photos based on given text info(tags, title and description)
+    tags: a comma-delimited list of tags
+    text: list of words
+    Add the photos into db if it's not in it, and return a list of photo_id.
+    """
+    params = base_params()
+    params['method'] = "flickr.photos.search"
+    params['lat'] = lat
+    params['lat'] = lat
+    params['sort'] = 'interestingness-desc'
+    params['content_type'] = 1
+    # params['machine_tags']
+    # params['machine_tags_mode']
+    params['extras'] =','.join(['description','date_taken', 'owner_name', 'geo', 
+        'tags', 'url_sq'])
+    params['per_page'] = per_page
+    response = requests.get(API_URL, params=params).json()
+
+    photos = response['photos']['photo'] #a list of photos
+
     photo_ids = []
     for p in photos:     
         photo_id = p['id'].encode('utf-8')
         photo_ids.append(photo_id)
         if db.session.query(Photo).get(photo_id) is None:
-            # user_id = p['owner'].encode('utf-8')
+            user_id = p['owner'].encode('utf-8')
+            username = p['ownername'].encode('utf-8')
+            description = p['description']['_content'].encode('utf-8')
+            tags = p['tags'].encode('utf-8')
+            title = p['title'].encode('utf-8')
             url = p['url_sq'].encode('utf-8')
+            date_taken = p['datetaken'].encode('utf-8')
+            lat = p['latitude']
+            lon = p['longitude']
+            country_code = rg.search((lat, lon))[0]['cc']
 
-            photo = Photo(photo_id=photo_id, url=url)
+            photo = Photo(photo_id=photo_id, user_id=user_id, username=username,
+            description=description, tags=tags, title=title, url=url, 
+            date_taken=date_taken, lat=lat, lon=lon, country_code=country_code)
 
             db_utils.add_photo(photo)
 

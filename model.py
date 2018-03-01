@@ -36,36 +36,15 @@ class Photo(db.Model):
     description = db.Column(db.String())
     tags = db.Column(db.String())
     title = db.Column(db.String(100))
-    views = db.Column(db.Integer)
     url = db.Column(db.String(200), nullable=False)
     date_taken = db.Column(db.DateTime)
-    date_upload = db.Column(db.DateTime)
-    latitude = db.Column(db.String(12))
-    longitude = db.Column(db.String(12))
+    lat = db.Column(db.String(12))
+    lon = db.Column(db.String(12))
     country_code = db.Column(db.String(2))
-    place_id = db.Column(db.String(30))
-    media = db.Column(db.String(10))
+    # place_id = db.Column(db.String(30))
 
     users = db.relationship('User', backref=db.backref('photos'))
 
-
-# class User(db.Model):
-#     """User of the website"""
-#     __tablename__ = 'users'
-
-#     def __repr__(self):
-#         """Provide helpful representation when printed."""
-#         return "<User user_id={} username={} user_location={} photo_count={} photo_since={} profile_url={}>".format(
-#             self.user_id, self.username, self.user_location, self.photo_count, 
-#             self.photo_since, self.profile_url)
-
-#     user_id = db.Column(db.String(20), primary_key=True)
-#     username = db.Column(db.String(100), nullable=False)
-#     # realname = db.Column(db.String(50))
-#     user_location = db.Column(db.String(50))
-#     photo_count = db.Column(db.Integer, nullable=False)
-#     photo_since = db.Column(db.DateTime)
-#     profile_url = db.Column(db.String(200), nullable=False)
 
 ##############################################################################
 # Helper functions

@@ -35,43 +35,47 @@
 <body>
 
 <h2> Places you have been visited </h2>
+<div id='users' 
+      data-username1='{{ username1 }}'
+      data-username2='{{ username2 }}'>
+</div>
 <p>
   <label for="year">Year :</label>
   <input type="text" id="year" style="border:0; color:#f6931f; font-weight:bold; " />
 </p>
 <div id="slider" style="width: 200px;"></div>
-
+<!-- 
 <div>
   <select id='user'>
     <option value='user1'> {{ username1 }} </option>
     <option value='user2'> {{ username2 }} </option>
   </select>
-</div>
+</div -->
 
 <div id="graph"></div>
 
 <script type="text/javascript">
 
-function updateMap(){
-  let dataFilePath = "";
-  switch($('#user').val()) {
-    case 'user1':
-      dataFilePath = "static/geo1.csv"; 
-      break;
-    case 'user2':
-      dataFilePath = "static/geo2.csv";
-      break;
-    default:
-      dataFilePath = null;  
-  }
+// function updateMap(){
+//   let dataFilePath = "";
+//   switch($('#user').val()) {
+//     case 'user1':
+//       dataFilePath = "static/geo1.csv"; 
+//       break;
+//     case 'user2':
+//       dataFilePath = "static/geo2.csv";
+//       break;
+//     default:
+//       dataFilePath = null;  
+//   }
   
-  d3.select("svg").remove();
-  updateUser(dataFilePath);
-}
+//   d3.select("svg").remove();
+//   updateUser(dataFilePath);
+// }
 
-updateUser("static/geo1.csv");
+updateUser("static/geo.csv");
 
-$('#user').on('change', updateMap);
+// $('#user').on('change', updateMap);
 
 var w = 1200;
 var h = 500;
@@ -119,7 +123,7 @@ function updateUser(dataFilePath){
 
   //http://stackoverflow.com/questions/11386150/lat-lon-positon-on-a-d3-js-map
   // +convert to string to number
-  var scalefactor=5;
+  var scalefactor=2;
 
   d3.csv(dataFilePath, function(data) {
     circles.selectAll("circle")
@@ -129,8 +133,15 @@ function updateUser(dataFilePath){
     .attr("cx", function(d, i) { return xy([+d["longitude"],+d["latitude"]])[0]; })
     .attr("cy", function(d, i) { return xy([+d["longitude"],+d["latitude"]])[1]; })
     .attr("r",  function(d) { return (+d["2010"])*scalefactor; })
-    .attr("title",  function(d) { return d["name"]+": "+Number(d["2010"]); })
-    .style("fill", function(d) {return d["user_id"] === '2' ? 'steelblue' : 'red';})
+    .attr("title",  function(d) { return d["country_name"]+": "+Number(d["2010"]); })
+    .style("fill", function(d) {
+      var user1 =  $('#users').data('username1');
+      var user2 =  $('#users').data('username2');
+      console.log(user2);
+      if (d["user"] === user1) {return 'steelblue'};
+      if (d["user"] === user2) {return 'red'};
+      // return d["user"] === username ? 'steelblue' : 'green';
+      })
     .on("mouseover", function(d) {
         d3.select(this).style("fill","#FC0");
       })
@@ -145,7 +156,7 @@ function updateUser(dataFilePath){
       .attr("y", function(d, i) { return xy([+d["longitude"],+d["latitude"]])[1]; })
       .attr("dy", "0.3em")
       .attr("text-anchor", "middle")
-      .text(function(d) { return d["name"] + ": " + Number(d["2010"]); });
+      .text(function(d) { return d["country_name"] + ": " + Number(d["2010"]); });
 
   });
 
@@ -155,10 +166,10 @@ function updateUser(dataFilePath){
       .transition()
       .duration(1000).ease("linear")
       .attr("r",  function(d) { return (+d[year])*scalefactor; })
-      .attr("title",  function(d) { return d["name"]+": "+Number(d[year]); });
+      .attr("title",  function(d) { return d["country_name"]+": "+Number(d[year]); });
       
       labels.selectAll("text")
-      .text(function(d) { return d["name"] + ": " + Number(d[year]); });
+      .text(function(d) { return d["country_name"] + ": " + Number(d[year]); });
     }
   });
 }
