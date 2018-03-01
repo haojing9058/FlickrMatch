@@ -23,8 +23,9 @@
     }
 
   </style>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
-  <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <!-- <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script> -->
   <script src="https://code.jquery.com/ui/1.10.4/jquery-ui.min.js"></script>
   <link rel="stylesheet" type="text/css" href="https://code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css" />
 
@@ -52,27 +53,19 @@
   <div id='recommendation'></div>
 </div>
 
+  <a href="/tags-bubble"> Word Match </a><br>
+
+  <a href="/"> New Match </a>
+
 <script type="text/javascript">
 
 
 loadMap("static/geo.csv");
 
-$(document).ready(function(){
-    $('#r-button').click(function(){
-      $('#recommendation').load('/recommendation-geo', { loadRecommendation });
-    });
-  })
-
-var w = 1200;
-var h = 500;
-var xy = d3.geo.equirectangular()
-          .scale(1000);
-var path = d3.geo.path()
-          .projection(xy);
-
 function loadRecommendation(results){
-  console.log(results);
+  // var results = response;
   var urls = results.urls;
+  console.log(urls);
   var text = "";
   var i;
   for(i = 0; i < urls.length; i++){
@@ -82,7 +75,29 @@ function loadRecommendation(results){
   $('button').hide();
 }
 
+function getRecommendation (){
+  $.get('/recommendation-geo', loadRecommendation);
+  console.log("finished sending ajax");
+}
+
+$(document).ready(function(){
+    $('#r-button').click(function(){
+      $('#recommendation').load('/recommendation-geo', getRecommendation);
+    });
+  })
+
+
+
+
 function loadMap(dataFilePath){
+
+  var w = 1200;
+  var h = 500;
+  var xy = d3.geo.equirectangular()
+          .scale(1000);
+  var path = d3.geo.path()
+          .projection(xy);
+
   $(document).ready(function() {
     $("#slider").slider({
       value:2017,
@@ -135,7 +150,6 @@ function loadMap(dataFilePath){
     .style("fill", function(d) {
       var user1 =  $('#users').data('username1');
       var user2 =  $('#users').data('username2');
-      console.log(user2);
       if (d["user"] === user1) {return 'steelblue'};
       if (d["user"] === user2) {return 'red'};
       // return d["user"] === username ? 'steelblue' : 'green';

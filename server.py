@@ -21,9 +21,13 @@ def check_username():
     # """check if username valid from Flickr."""
     username1 = request.form.get('username1')
     username2 = request.form.get('username2')
+
     check = {}
     # #get user id from Flickr api
     def helper(username):
+        if username == "":
+            return 'empty'
+
         user = request_api.get_userid_by_username(username)
         if user == 'fail':
             return 'fail'
@@ -32,6 +36,7 @@ def check_username():
     check['username2_ck'] = helper(username2)
 
     return jsonify(check)
+
 
 
 @app.route('/userinfo', methods=['POST'])
@@ -105,7 +110,7 @@ def display_partial_view():
     word_count.get_description_csv(df_description)
     result['match_description'] = word_count.get_match_score(df_description)
 
-    #below is for recommendatio
+    #below is for recommendation
     tags = word_count.get_tag_lst()
     text = word_count.get_text_lst()
     photo_ids = request_api.recommendation_by_text(tags, text)
@@ -133,16 +138,21 @@ def display_map():
 
 @app.route('/recommendation-geo')
 def display_recommendation_geo():
+    
     result = {}
     geo_lst = word_count.get_lat_lon()
-    photo_ids = []
-    for lat, lon in geo_lst:
-       photo_ids += request_api.recommendation_by_geo(lat, lon, per_page=12) 
-   
-    urls = []
-    for photo_id in photo_ids:
-        urls.append(db.session.query(Photo.url).filter(Photo.photo_id == photo_id).first())
 
+    urls = []
+    for lat, lon in geo_lst:
+        if len(geo_lst) == 2:
+            photo_ids = request_api.recommendation_by_geo(lat, lon, per_page=18)
+        else:
+            photo_ids = request_api.recommendation_by_geo(lat, lon, per_page=36)
+        for photo_id in photo_ids:
+            urls.append(db.session.query(Photo.url).filter(Photo.photo_id == photo_id).first())
+
+    # result['geo_lst'] = geo_lst
+    # result['photo_ids'] = photo_ids
     result['urls'] = urls
 
     return jsonify(result)

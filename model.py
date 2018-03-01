@@ -4,7 +4,6 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 app = Flask(__name__)
-# create_engine('postgres:///flickrgram')
 
 
 class User(db.Model):
@@ -35,7 +34,7 @@ class Photo(db.Model):
     username = db.Column(db.String(100))
     description = db.Column(db.String())
     tags = db.Column(db.String())
-    title = db.Column(db.String(100))
+    title = db.Column(db.String())
     url = db.Column(db.String(200), nullable=False)
     date_taken = db.Column(db.DateTime)
     lat = db.Column(db.String(12))
@@ -60,7 +59,7 @@ def connect_to_db(app):
     """Connect the database to our Flask app."""
 
     # Configure to use our database.
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres:///flickrgram'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres:///flickrmatch'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.app = app
     db.init_app(app)

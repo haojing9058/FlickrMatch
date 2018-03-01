@@ -5,58 +5,62 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src = "https://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
 
-<h1>Flickrgram</h1>
+<h1>FlickrMatch</h1>
 
 <form id="users" action="/userinfo" method="POST">
   <div class = "ui-widget">
-     <!-- <p>Username 1:</p> -->
      <label for = "username1">Username 1: </label>
      <input id = "username1" type="text" name="username1">
   </div>
   <div class = "ui-widget">
-     <!-- <p>Username 1:</p> -->
      <label for = "username2">Username 2: </label>
      <input id = "username2" type="text" name="username2">
   </div>
-  <!-- <div>
-    Username 1: <input id="username1" type="text" name="username1">
-  </div> -->
-<!--   <div>
-    Username 2: <input id="username2" type="text" name="username2">
-  </div> -->
+  
   <input id="check" type="submit" value="submit">
 </form> 
 
-<!-- <div><input id="next" type="submit" value="next"></div> -->
 
-<!-- <div id="username1"></div>
-<div id="photos-user1"></div>
-<div id="username2"></div>
-<div id="photos-user2"></div> -->
 
 <script>
 
   function showSubmition(results){
 
-      if (results.username1_ck == 'fail'){
-        alert("Invalid username 1, please try again!"); 
+    console.log(results)
+
+      if (results.username1_ck == 'fail' & results.username2_ck == 'fail'){
+        alert("Invalid username 1 and username 2, please try again!");
         window.location.replace('/');
       }
 
       else if (results.username2_ck == 'fail'){
-        console.log('get fail')
         alert("Invalid username 2, please try again!"); 
         window.location.replace('/');
       }
 
-      else if (results.username1_ck == 'fail' & results.username2_ck == 'fail'){
-        alert("Invalid username 1 and username 2, please try again!");
+      else if (results.username1_ck == 'fail'){
+        alert("Invalid username 1, please try again!"); 
+        window.location.replace('/');
+      }
+
+      else if (results.username1_ck == 'empty' & results.username2_ck == 'empty'){
+        alert("Please enter usernames!");
+        window.location.replace('/');
+      }
+
+      else if (results.username2_ck == 'empty'){
+        alert("Please enter Username 2!"); 
+        window.location.replace('/');
+      }
+
+      else if (results.username1_ck == 'empty'){
+        alert("Please enter Username 1!"); 
+        window.location.replace('/');
       }
 
       else {
-        console.log("here");
-      $("#users").submit();
-        console.log('success')
+        $("#users").submit();
+        console.log('success');
         }
       }
   
@@ -69,6 +73,7 @@
     };
     $.post("/user-check", formInputs, showSubmition);
   }
+
 
   $("#check").on("click", submitUsername);
 

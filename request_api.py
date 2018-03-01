@@ -60,6 +60,7 @@ def seed_photos_by_userid(user_id, sort='interesting', per_page=100):
     params['per_page'] = per_page
     response = requests.get(API_URL, params=params).json()
     photos = response['photos']['photo']
+
     for p in photos:
         photo_id = p['id'].encode('utf-8')
 
@@ -105,12 +106,12 @@ def recommendation_by_text(tags, text, per_page=36):
     # params['machine_tags']
     # params['machine_tags_mode']
     params['media'] = 'photos'
-    params['extras'] = 'url_sq'
+    params['extras'] =','.join(['description','date_taken', 'owner_name', 'geo', 
+        'tags', 'url_sq'])
     params['per_page'] = per_page
     response = requests.get(API_URL, params=params).json()
 
     photos = response['photos']['photo'] #a list of photos
-
 
     photo_ids = []
     for p in photos:     
@@ -120,6 +121,9 @@ def recommendation_by_text(tags, text, per_page=36):
         if db.session.query(Photo).get(photo_id) is None:
             user_id = p['owner'].encode('utf-8')
             username = p['ownername'].encode('utf-8')
+            if db.session.query(User).get(user_id) is None:
+                user = User(user_id=user_id, username=username)
+                db_utils.create_user(user)
             description = p['description']['_content'].encode('utf-8')
             tags = p['tags'].encode('utf-8')
             title = p['title'].encode('utf-8')
@@ -167,9 +171,13 @@ def recommendation_by_geo(lat, lon, per_page=36):
     for p in photos:     
         photo_id = p['id'].encode('utf-8')
         photo_ids.append(photo_id)
+
         if db.session.query(Photo).get(photo_id) is None:
             user_id = p['owner'].encode('utf-8')
             username = p['ownername'].encode('utf-8')
+            if db.session.query(User).get(user_id) is None:
+                user = User(user_id=user_id, username=username)
+                db_utils.create_user(user)
             description = p['description']['_content'].encode('utf-8')
             tags = p['tags'].encode('utf-8')
             title = p['title'].encode('utf-8')

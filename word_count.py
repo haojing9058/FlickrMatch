@@ -105,9 +105,12 @@ def get_match_score(df):
     """ Calculate match score given the "word, count, user" df.
     """
     sum_of_common = df.loc[df['user']=='common', 'count'].sum()
-    sum_of_individual = df['count'].sum()
-    match_score = float(sum_of_common) / float(sum_of_individual)
-    return '{0:.2f}%'.format(match_score*100)
+    total = df['count'].sum()
+    if total:
+        match_score = float(sum_of_common) / float(total)
+        return '{0:.2f}%'.format(match_score*100)
+    else: 
+        return '0.00%'
 
 def get_tag_lst():
     """Return a list of tags used by both users.
@@ -184,7 +187,7 @@ def geo(username):
 def get_geo_csv(df1, df2):
     new = pd.concat([df1, df2], ignore_index=True)
     return new.to_csv(path_or_buf='static/geo.csv', encoding='utf-8')
-    
+
 
 def get_lat_lon():
     df = pd.read_csv('static/geo.csv')
@@ -197,9 +200,11 @@ def get_lat_lon():
         set2 = set(df.loc[df['user']==user2]['country_name'])
         common = set1 & set2
         if common:
-            geo_array = df.loc[df['country_name'].isin(common)][['latitude', 
-            'longitude']].drop_duplicates(keep='first').values
-            return geo_array.tolist()
+            geo_array = df.loc[df['country_name'].isin(common)].sort_values(by=['country_name','total'], 
+                ascending=False).drop_duplicates(subset=['latitude', 'longitude'], 
+                keep='first').sort_values(by=['total'], ascending=False).head(2)[['latitude','longitude']].values.tolist()
+            return geo_array
+
         else:
             top_geo1 = df.loc[df['user']==user1].sort_values(by='total', ascending=False).head(1)[['latitude',  'longitude']]
             top_geo2 = df.loc[df['user']==user2].sort_values(by='total', ascending=False).head(1)[['latitude',  'longitude']]
@@ -209,8 +214,8 @@ def get_lat_lon():
         top_geo = df.sort_values(by='total', ascending=False).head(2)[['latitude', 'longitude']]
         return top_geo.values.tolist()
 
-    else:
-        return "fail"
+    # else:
+    #     return 'fail'
 
 
 

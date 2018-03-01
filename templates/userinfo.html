@@ -19,7 +19,7 @@
 
 <ul>
   {% if urls2|length < 9 %}
-    <li><p> Please upload more photos to Flickr! </p></li>
+    <li><p> Have at least nine photos on Flickr for this game! </p></li>
   {% else %}
     {% for url in urls2 %}
       <li><img src={{url}}></li>
@@ -27,6 +27,8 @@
   {% endif %}
 </ul>
 
-<a href="/tags-bubble?username1={{ username1 }}&username2={{ username2 }}"> Let's see Word Match! </a>
+<a href="/tags-bubble?username1={{ username1 }}&username2={{ username2 }}"> Word Match! </a><br>
+<a href="/"> New Match </a>
+
 
 {% endblock %}
