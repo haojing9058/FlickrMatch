@@ -102,7 +102,7 @@ def display_partial_view():
     result['match_title'] = word_count.get_match_score(df_title)
 
     df_description = word_count.users_word_count(username1, username2, text_type='description')
-    word_count.get_description_csv(df_title)
+    word_count.get_description_csv(df_description)
     result['match_description'] = word_count.get_match_score(df_description)
 
     #below is for recommendatio
@@ -125,11 +125,28 @@ def display_map():
     
     username1 = request.args.get('username1')
     username2 = request.args.get('username2')
-    word_count.get_geo_csv(word_count.geo(username1), word_count.geo(username2), 'static/geo.csv')
+    word_count.get_geo_csv(word_count.geo(username1), word_count.geo(username2))
 
     return render_template('map.html',
                             username1=username1, 
                             username2=username2)
+
+@app.route('/recommendation-geo')
+def display_recommendation_geo():
+    result = {}
+    geo_lst = word_count.get_lat_lon()
+    photo_ids = []
+    for lat, lon in geo_lst:
+       photo_ids += request_api.recommendation_by_geo(lat, lon, per_page=12) 
+   
+    urls = []
+    for photo_id in photo_ids:
+        urls.append(db.session.query(Photo.url).filter(Photo.photo_id == photo_id).first())
+
+    result['urls'] = urls
+
+    return jsonify(result)
+
 
 if __name__ == "__main__":
     # We have to set debug=True here, since it has to be True at the

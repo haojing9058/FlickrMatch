@@ -44,38 +44,24 @@
   <input type="text" id="year" style="border:0; color:#f6931f; font-weight:bold; " />
 </p>
 <div id="slider" style="width: 200px;"></div>
-<!-- 
-<div>
-  <select id='user'>
-    <option value='user1'> {{ username1 }} </option>
-    <option value='user2'> {{ username2 }} </option>
-  </select>
-</div -->
 
 <div id="graph"></div>
 
+<div>
+  <button id='r-button'> See Recommendation </button>
+  <div id='recommendation'></div>
+</div>
+
 <script type="text/javascript">
 
-// function updateMap(){
-//   let dataFilePath = "";
-//   switch($('#user').val()) {
-//     case 'user1':
-//       dataFilePath = "static/geo1.csv"; 
-//       break;
-//     case 'user2':
-//       dataFilePath = "static/geo2.csv";
-//       break;
-//     default:
-//       dataFilePath = null;  
-//   }
-  
-//   d3.select("svg").remove();
-//   updateUser(dataFilePath);
-// }
 
-updateUser("static/geo.csv");
+loadMap("static/geo.csv");
 
-// $('#user').on('change', updateMap);
+$(document).ready(function(){
+    $('#r-button').click(function(){
+      $('#recommendation').load('/recommendation-geo', { loadRecommendation });
+    });
+  })
 
 var w = 1200;
 var h = 500;
@@ -84,7 +70,19 @@ var xy = d3.geo.equirectangular()
 var path = d3.geo.path()
           .projection(xy);
 
-function updateUser(dataFilePath){
+function loadRecommendation(results){
+  console.log(results);
+  var urls = results.urls;
+  var text = "";
+  var i;
+  for(i = 0; i < urls.length; i++){
+    text += "<img src='" + urls[i] + "'></img>";
+  }
+  $('#recommendation').html(text);
+  $('button').hide();
+}
+
+function loadMap(dataFilePath){
   $(document).ready(function() {
     $("#slider").slider({
       value:2017,

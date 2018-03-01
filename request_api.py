@@ -151,7 +151,7 @@ def recommendation_by_geo(lat, lon, per_page=36):
     params = base_params()
     params['method'] = "flickr.photos.search"
     params['lat'] = lat
-    params['lat'] = lat
+    params['lon'] = lon
     params['sort'] = 'interestingness-desc'
     params['content_type'] = 1
     # params['machine_tags']

@@ -145,7 +145,7 @@ def get_text_lst():
 COUNTRY_CODE = pd.read_csv('static/countries_code.csv')
 COUNTRY_CODE.index = COUNTRY_CODE['country']
 # COUNTRY_CODE.drop(['country'], axis=1, inplace=True)
-TEMPLATE_DF = pd.DataFrame(columns=['latitude', 'longitude', 2011, 2012, 2013, 
+TEMPLATE_DF = pd.DataFrame(columns=['latitude', 'longitude', 2010, 2011, 2012, 2013, 
     2014, 2015, 2016, 2017, 2018, 'country_name', 'user'])
 TEMPLATE_DF.index.name = 'country_code'
 
@@ -181,10 +181,36 @@ def geo(username):
     result.fillna(value=0, inplace=True)
     return result
 
-def get_geo_csv(df1, df2, path):
-    new = pd.concat([df1, df2])
-    return new.to_csv(path_or_buf=path, encoding='utf-8')
+def get_geo_csv(df1, df2):
+    new = pd.concat([df1, df2], ignore_index=True)
+    return new.to_csv(path_or_buf='static/geo.csv', encoding='utf-8')
+    
 
+def get_lat_lon():
+    df = pd.read_csv('static/geo.csv')
+    df['total'] = df['2010'] + df['2011'] + df['2012'] + df['2013'] + df['2014'] + df['2015'] + df['2016'] + df['2017'] + df['2018']
+
+    if len(set(df['user'])) == 2:
+
+        user1, user2 = set(df['user'])
+        set1 = set(df.loc[df['user']==user1]['country_name'])
+        set2 = set(df.loc[df['user']==user2]['country_name'])
+        common = set1 & set2
+        if common:
+            geo_array = df.loc[df['country_name'].isin(common)][['latitude', 
+            'longitude']].drop_duplicates(keep='first').values
+            return geo_array.tolist()
+        else:
+            top_geo1 = df.loc[df['user']==user1].sort_values(by='total', ascending=False).head(1)[['latitude',  'longitude']]
+            top_geo2 = df.loc[df['user']==user2].sort_values(by='total', ascending=False).head(1)[['latitude',  'longitude']]
+            return top_geo1.values.tolist() + top_geo2.values.tolist()
+
+    elif len(set(df['user'])) == 1:
+        top_geo = df.sort_values(by='total', ascending=False).head(2)[['latitude', 'longitude']]
+        return top_geo.values.tolist()
+
+    else:
+        return "fail"
 
 
 
