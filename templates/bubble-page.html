@@ -34,7 +34,7 @@
   data-username2= '{{ username2 }}' 
   data-matchscore='{{ match_tags}}'>
   </div>
-  <div id='match'><h3>{{ username1 }} and {{ username2}} is {{ match_tags }} MATCH in photo tags!</h3></div>
+  <div id='match'><h3>{{ name1 }} and {{ name2 }} is {{ match_tags }} MATCH in photo tags!</h3></div>
   <div>
     <select id='text-source' name='text-source'>
       <option value='tags'>Photo Tags</option>
@@ -45,12 +45,11 @@
 
   <div id='graph'></div>
   
-  <div>
     <button> See Recommendation </button>
     <div id='recommendation'></div>
   </div>
 
-  <a href="geo?username1={{ username1 }}&username2={{ username2 }}"> Location </a><br>
+  <a href="geo?username1={{ username1 }}&username2={{ username2 }}&name1={{ name1 }}&name2={{ name2 }}"> Location </a><br>
   <a href="/"> New Match </a>
 
 </body>
@@ -100,28 +99,28 @@
     username2 = $('#matchScore').data('username2');
     $.post(url, {'username1': username1, 'username2': username2},
       function(results){
-        console.log(results)
         var urls = results.urls;
         var text = "";
         var i;
         for(i = 0; i < urls.length; i++){
           text += "<img src='" + urls[i] + "'></img>";
+
         }
+          // console.log(text);
         $('#recommendation').html(text);
         $('button').hide();
-
       });
   }
 
   $(document).ready(function(){
-    $('button').click(function(){
-      $('#recommendation').load('/tags-bubble', { loadRecommendation });
+    $('button').click(function() {
+      loadRecommendation();
     });
   })
 
     // D3 global variables
-  var width = 1200,
-      height = 600,
+  var width = 900,
+      height = 350,
       padding = 1.5, // separation between same-color nodes
       clusterPadding = 8, // separation between different-color nodes
       maxRadius = 20;
@@ -525,6 +524,7 @@ function updateDescription() {
         .style("opacity", 1);
 
       var node = svg.selectAll("circle")
+          .attr("id", "node")
           .data(nodes)
           .enter().append("g").call(force.drag);
 

@@ -45,6 +45,8 @@ def display_userinfo():
    
     username1 = request.form.get('username1')
     username2 = request.form.get('username2')
+    name1 = request.form.get('name1')
+    name2 = request.form.get('name2')
     
     def helper(username):
         """helper function to get the top 9 photo"""
@@ -65,6 +67,8 @@ def display_userinfo():
     return render_template('userinfo.html', 
                             username1 = username1,
                             username2 = username2,
+                            name1=name1,
+                            name2=name2,
                             urls1 = url_list1,
                             urls2 = url_list2)
 
@@ -76,6 +80,8 @@ def display_tags_bubble():
     """
     username1 = request.args.get('username1')
     username2 = request.args.get('username2')
+    name1 = request.args.get('name1')
+    name2 = request.args.get('name2')
 
     df_tags = word_count.users_word_count(username1, username2)
     word_count.get_tags_csv(df_tags)
@@ -85,6 +91,8 @@ def display_tags_bubble():
     return render_template('bubble-page.html', 
                             username1 = username1,
                             username2 = username2,
+                            name1=name1,
+                            name2=name2,
                             match_tags=match_tags)
 
    
@@ -130,11 +138,15 @@ def display_map():
     
     username1 = request.args.get('username1')
     username2 = request.args.get('username2')
+    name1 = request.args.get('name1')
+    name2 = request.args.get('name2')
     word_count.get_geo_csv(word_count.geo(username1), word_count.geo(username2))
 
     return render_template('map.html',
                             username1=username1, 
-                            username2=username2)
+                            username2=username2,
+                            name1=name1,
+                            name2=name2)
 
 @app.route('/recommendation-geo')
 def display_recommendation_geo():
