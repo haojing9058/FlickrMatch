@@ -4,56 +4,54 @@
 <link href = "https://code.jquery.com/ui/1.8.23/themes/smoothness/jquery-ui.css" rel = "stylesheet">
 <script src = "https://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
 
-<!-- <h1>FlickrMatch</h1> -->
-
-<nav>
-  
+<nav class="navbar navbar-light bg-faded">
+  <h1 class="navbar-brand mb-0">FlickrMatch</h1>
 </nav>
 
 <div class="container">
-  <div class="row">
+  <div class="row justify-content-center">
     <h1>Find match through Flickr photos.</h1>
   </div>
-  <div class="row">
+  <div class="row justify-content-center">
     <h5>Simply by paring Flickr usernames.</h5>
   </div>
-
   <form id="users" action="/userinfo" method="POST">
-        <div class="form-group row">
-          <label for="name1" class="col-md-1 col-form-label"> Player 1 </label>
+    <div class="form-group row justify-content-center">
+      <label for="name1" class="col-md-1 col-form-label"> Player 1 </label>
 
-          <div class="col-md-3 ui-widget">
-            <input class="form-control" type="text" id = "name1" name="name1" placeholder="Preferred Name">
-          </div>
+      <div class="col-md-3 ui-widget">
+        <input class="form-control" type="text" id = "name1" name="name1" placeholder="Preferred Name">
+      </div>
 
-          <div class="input-group col-md-4" >
-            <div class="input-group-prepend">
-              <div class="input-group-text">@</div>
-            </div>
-            <div class = "ui-widget">
-               <input class="form-control" id="username1" type="text" name="username1" placeholder="Flickr Username">
-            </div>
-          </div>
+      <div class="input-group col-md-4" >
+        <div class="input-group-prepend">
+          <div class="input-group-text">@</div>
         </div>
-
-        <div class="form-group row">
-          <label for="name2" class="col-md-1 col-form-label"> Player 2 </label>
-
-          <div class="col-md-3 ui-widget">
-            <input class="form-control" type="text" id = "name2" name="name2" placeholder="Preferred Name">
-          </div>
-
-          <div class="input-group col-md-4" >
-            <div class="input-group-prepend">
-              <div class="input-group-text">@</div>
-            </div>
-            <div class = "ui-widget">
-               <input class="form-control" id ="username2" type="text" name="username2" placeholder="Flickr Username">
-            </div>
-          </div>
+        <div class = "ui-widget">
+           <input class="form-control" id="username1" type="text" name="username1" placeholder="Flickr Username">
         </div>
-    <div class="col-auto my-2">
-      <button type="submit" id="check class="btn btn-primary">Match</button>
+      </div>
+    </div>
+
+    <div class="form-group row justify-content-center">
+      <label for="name2" class="col-md-1 col-form-label"> Player 2 </label>
+
+      <div class="col-md-3 ui-widget">
+        <input class="form-control" type="text" id = "name2" name="name2" placeholder="Preferred Name">
+      </div>
+
+      <div class="input-group col-md-4" >
+        <div class="input-group-prepend">
+          <div class="input-group-text">@</div>
+        </div>
+        <div class = "ui-widget">
+           <input class="form-control" id ="username2" type="text" name="username2" placeholder="Flickr Username">
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center my-4">
+      <button type="submit" id="check" class="btn btn-primary btn-lg">Match</button>
     </div>
   </form>
 </div>
@@ -62,7 +60,8 @@
 
   function showSubmition(results){
 
-    console.log(results)
+    console.log(results);
+    console.log('hi there');
 
       if (results.username1_ck == 'fail' & results.username2_ck == 'fail'){
         alert("Invalid username 1 and username 2, please try again!");

@@ -1,34 +1,97 @@
 {% extends 'base.html' %}
 {% block content %}
+<style type="text/css">
+  .grid-image {
+    margin-bottom: 0.7rem!important;
+    margin-right: -1rem!important;
+  }
 
+</style>
 
+<nav class="navbar navbar-light bg-faded">
+  <a class="navbar-brand" href="/">FlickrMatch</a>
+</nav>
+<div class="container">
+  <div class="row">
+    <div class="col-md-5">
+      <h2>{{ name1 }}</h2>
+      {% if urls1|length < 9 %}
+        <p> Have at least nine photos on Flickr for this game! </p>
+      {% else %}
+        <div class="row">
+          {% for url in urls1 %}   
+            {% if loop.index==1 or loop.index==2 or loop.index==3 %}       
+              <div class="col-md-4 grid-image">
+                <img src={{url}} class="rounded" width="100%" height="auto">
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
 
-<h2>{{ name1 }}</h2>
+        <div class="row">
+          {% for url in urls1 %}   
+            {% if loop.index==4 or loop.index==5 or loop.index==6 %}       
+              <div class="col-md-4 grid-image">
+                <img src={{url}} class="rounded" width="100%" height="auto">
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
 
-<ul>
-  {% if urls1|length < 9 %}
-    <li><p> Have at least nine photos on Flickr for this game! </p></li>
-  {% else %}
-    {% for url in urls1 %}
-      <li><img src={{url}}></li>
-    {% endfor %}
-  {% endif %}
-</ul>
+        <div class="row">
+          {% for url in urls1 %}   
+            {% if loop.index==7 or loop.index==8 or loop.index==9 %}       
+              <div class="col-md-4 grid-image">
+                <img src={{url}} class="rounded" width="100%" height="auto">
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+    {% endif %}
+    </div>
+    
+    <div class="col-md-1"></div>
 
-<h2>{{ name2 }}</h2>
+    <div class="col-md-5">
+      <h2>{{ name2 }}</h2>
+      {% if urls2|length < 9 %}
+        <p> Have at least nine photos on Flickr for this game! </p>
+      {% else %}
+        <div class="row">
+          {% for url in urls2 %}   
+            {% if loop.index==1 or loop.index==2 or loop.index==3 %}       
+              <div class="col-md-4 grid-image">
+                <img src={{url}} class="rounded" width="100%" height="auto">
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
 
-<ul>
-  {% if urls2|length < 9 %}
-    <li><p> Have at least nine photos on Flickr for this game! </p></li>
-  {% else %}
-    {% for url in urls2 %}
-      <li><img src={{url}}></li>
-    {% endfor %}
-  {% endif %}
-</ul>
+        <div class="row">
+          {% for url in urls2 %}   
+            {% if loop.index==4 or loop.index==5 or loop.index==6 %}       
+              <div class="col-md-4 grid-image">
+                <img src={{url}} class="rounded" width="100%" height="auto">
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
 
-<a href="/tags-bubble?username1={{ username1 }}&username2={{ username2 }}&name1={{ name1 }}&name2={{ name2 }}"> Word Match! </a><br>
-<a href="/"> New Match </a>
-
+        <div class="row">
+          {% for url in urls2 %}   
+            {% if loop.index==7 or loop.index==8 or loop.index==9 %}       
+              <div class="col-md-4 grid-image">
+                <img src={{url}} class="rounded" width="100%" height="auto">
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+    {% endif %}
+    </div>
+  </div>
+  
+  <a id="word-match" class="button" href="/tags-bubble?username1={{ username1 }}&username2={{ username2 }}&name1={{ name1 }}&name2={{ name2 }}"> Word Match </a><br>
+  
+</div>
 
 {% endblock %}
