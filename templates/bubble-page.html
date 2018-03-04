@@ -2,46 +2,94 @@
 {% block content %}
 
 <style type="text/css">
-  /*to be changed later*/
+  /*dropdown style*/
+  .styled-select {
+   background: url(http://i62.tinypic.com/15xvbd5.png) no-repeat 96% 0;
+   height: 29px;
+   overflow: hidden;
+   width: 240px;
+  }
+
+  .styled-select select {
+   background: transparent;
+   border: none;
+   color: white;
+   font-size: 14px;
+   height: 29px;
+   padding: 5px; /* If you add too much padding here, the options won't show in IE */
+   width: 268px;
+  }
+
+  .styled-select.slate {
+     background: url(http://i62.tinypic.com/2e3ybe1.jpg) no-repeat right center;
+     height: 34px;
+     width: 240px;
+  }
+
+  .styled-select.slate select {
+     border: 1px solid #ccc;
+     font-size: 16px;
+     height: 34px;
+     width: 268px;
+  }
+
+  .green { background-color: #779126; }
+
+  .select-rounded {
+   -webkit-border-radius: 20px;
+   -moz-border-radius: 20px;
+   border-radius: 20px;
+  }
+
   text {
     font: 12px sans-serif;
 
   }
+
   circle {
       stroke: #636363;
       stroke-width: 1;
       opacity: 1;
   }
+
   div.tooltip{
-    /*visibility:hidden;*/
-    position: absolute;
-    color: white;
-    padding: 8px;
     background-color: #626D71;
     border-radius: 6px;
-    text-align: center;
+    color: white;
     font-family: monospace; 
+    position: absolute;
+    padding: 8px;
+    text-align: center;
     width: 200px;
   }
+
   .svg{
     background-color: #D9D9D9;
   }
+
+}
 </style>
 
-  <nav class="navbar navbar-light bg-faded">
-  <a class="navbar-brand" href="/">FlickrMatch</a>
-  </nav>
+<nav class="navbar navbar-light bg-faded ">
+  <div class="container-fluid">
+      <a class="navbar-brand" href="#">FlickrMatch</a>
+      <a class="navbar-text navbar-right" href="#">Best Nine</a>
+  </div>
+</nav>
 
-  <div class='container'>
-  <div id='matchScore' 
+<div id='matchScore' 
   data-username1='{{ username1 }}' 
   data-username2= '{{ username2 }}'
   data-name1 = '{{ name1 }}'
   data-name2 = '{{ name2 }}' 
   data-matchscore='{{ match_tags}}'>
-  </div>
+</div>
+
+<div class='container'>
+
   <div id='match'><h4>{{ name1 }} and {{ name2 }} is {{ match_tags }} match in photo tags</h4></div>
-  <div>
+
+  <div class="styled-select green select-rounded">
     <select id='text-source'>
       <option value='tags'>Photo Tags</option>
       <option value='title'>Photo Title</option>
@@ -51,15 +99,27 @@
 
   <div id='graph'></div>
   
-    <button> See Recommendation </button>
-    <div id='recommendation'></div>
-  </div>
-
-  <a href="geo?username1={{ username1 }}&username2={{ username2 }}&name1={{ name1 }}&name2={{ name2 }}"> Location </a><br>
+  <button id='recommendation-button'> See Recommendation </button>
+  <div id='recommendation'></div>
+  <a href="geo?username1={{ username1 }}&username2={{ username2 }}&name1={{ name1 }}&name2={{ name2 }}"> Location </a>
 </div>
 
 
+<script src='https://cdnjs.cloudflare.com/ajax/libs/spin.js/2.0.1/spin.min.js'></script>
+
 <script>
+  // http://spin.js.org/ loader settings
+  var spinnerOpts = {
+    lines: 9, // The number of lines to draw
+    length: 9, // The length of each line
+    width: 5, // The line thickness
+    radius: 14, // The radius of the inner circle
+    color: '#EE3124', // #rgb or #rrggbb or array of colors
+    speed: 1.9, // Rounds per second
+    trail: 40, // Afterglow percentage
+    className: 'spinner', // The CSS class to assign to the spinner
+    position: 'absolute' // Element positioning
+  };
 
   function updateGraph() {
     var username1 = $('#matchScore').data('username1');
@@ -68,36 +128,24 @@
     var name2 = $('#matchScore').data('name2');
 
     var url = '/tags-bubble';
+    var selected = $('#text-source').val();
+    
+    var target = document.getElementById("graph");
+  var spinner = new Spinner(spinnerOpts).spin(target);
 
-    if ($('#text-source').val() == 'tags') {
-      $.post(url, {'username1': username1,'username2': username2}, function(results){
-        // console.log(results)
-        var matchscore = results.match_tags;
-        $('#match').html('<h3>' + name1 + ' and ' + name2 + ' is ' + matchscore  +' match in photo tags' + '</h3>');
-        d3.select("svg").remove();
-        updateBubble("static/tags.csv");
-      });
-    }
+    $.post(url, {'username1': username1,'username2': username2
+      }, function(results){
+      var matchscore = results.match_description;
+      $('#match')
+        .html(`<h3>${name1} and ${name2} is ${matchscore} match in photo ${selected}</h3>`);
 
-    if ($('#text-source').val() == 'title') {
-      console.log("clicked");
-      $.post(url, {'username1': username1,'username2': username2},function(results){
-        var matchscore = results.match_title;
-        $('#match').html('<h3>' + name1 + ' and ' + name2 + ' is ' + matchscore  +' match in photo title' + '</h3>');
-        d3.select("svg").remove();
-        updateBubble("static/title.csv");
-      });
-    }
+      d3.select("svg").remove();
+      updateBubble(`static/${selected}.csv`);
+      
+      // stop spinner when svg changes
+      spinner.stop();
+    });
 
-    if ($('#text-source').val() == 'description') {
-      $.post(url, {'username1': username1,'username2': username2
-        }, function(results){
-        var matchscore = results.match_description;
-        $('#match').html('<h3>' + name1 + ' and ' + name2 + ' is ' + matchscore  +' match in photo description' + '</h3>');
-        d3.select("svg").remove();
-        updateBubble("static/description.csv");
-      });
-    }
   }
 
   $('#text-source').on('change', updateGraph);
@@ -112,15 +160,15 @@
         var text = "";
         var i;
         for(i = 0; i < urls.length; i++){
-          text += "<img src='" + urls[i] + "'></img>";
+          text += `<img src='${urls[i]}'></img>`;
         }
         $('#recommendation').html(text);
-        $('button').hide();
+        $('#recommendation-button').hide();
       });
   }
 
   $(document).ready(function(){
-    $('button').click(function() {
+    $('#recommendation-button').click(function() {
       loadRecommendation();
     });
   })
@@ -138,11 +186,10 @@
   var opacity = d3.scale.ordinal()
         .range([0.8, 0.8, 0.8])
 
-
   //D3 function that display given textUrl
   function updateBubble(dataFilePath) {
     d3.text(dataFilePath, function(error, text) {
-        if (error) throw error;
+        if (error) throw error;                
 
         var colNames = "word,count,user\n" + text;
         var data = d3.csv.parse(colNames);
@@ -186,7 +233,7 @@
 
       var div = d3.select("#graph").append("div") 
         .attr("class", "tooltip")       
-        .style("opacity", 1);
+        .style("opacity", 0);
 
       var node = svg.selectAll("circle")
           .data(nodes)
@@ -233,7 +280,6 @@
               div.transition()   
                 .duration(100)    
                 .style("opacity", 0);
-                // .style("visibility", "hidden");
             });
 
       function create_nodes(data,node_counter) {
@@ -310,8 +356,7 @@
       }
     });
   }
-
-  updateGraph("static/tags.csv"); 
+  updateGraph(); 
 
   Array.prototype.contains = function(v) {
     for(var i = 0; i < this.length; i++) {

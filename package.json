@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.0.1",
   "dependencies": {
+    "spin.js": "^3.1.0",
     "topojson": "1"
   }
 }
