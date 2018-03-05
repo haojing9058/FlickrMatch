@@ -1,71 +1,33 @@
 {% extends 'base.html' %}
 {% block content%}
-
 <style type="text/css">
-    /*style for autocomplete*/
-    .ui-autocomplete {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  z-index: 1000;
-  float: left;
-  display: none;
-  min-width: 160px;
-  _width: 160px;
-  padding: 4px 0;
-  margin: 2px 0 0 0;
-  list-style: none;
-  background-color: #ffffff;
-  border-color: #ccc;
-  border-color: rgba(0, 0, 0, 0.2);
-  border-style: solid;
-  border-width: 1px;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  border-radius: 5px;
-  -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-  -moz-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-  -webkit-background-clip: padding-box;
-  -moz-background-clip: padding;
-  background-clip: padding-box;
-  *border-right-width: 2px;
-  *border-bottom-width: 2px;
-
-  .ui-menu-item > a.ui-corner-all {
-    display: block;
-    padding: 3px 15px;
-    clear: both;
-    font-weight: normal;
-    line-height: 18px;
-    color: #555555;
-    white-space: nowrap;
-
-    &.ui-widget-content, &.ui-state-focus {
-      color: #ffffff;
-      text-decoration: none;
-      background-color: #0088cc;
-      border-radius: 0px;
-      -webkit-border-radius: 0px;
-      -moz-border-radius: 0px;
-      background-image: none;
-    }
-  }
+    .container-fluid {
+    padding-top: 140px;
+    background-size:cover;
+    background-image:url("static/pexels-photo-571169.jpeg"); 
+    background-position: center;
+    background-repeat: no-repeat; 
+    height: 700px;
 }
+    .subtitle {
+      padding-bottom: 15px;
+    }
+
 </style>
 
-<!-- <link href = "https://code.jquery.com/ui/1.8.23/themes/smoothness/jquery-ui.css" rel = "stylesheet"> -->
+<link href = "https://code.jquery.com/ui/1.8.23/themes/smoothness/jquery-ui.css" rel = "stylesheet">
 <script src = "https://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+<script src = "https://code.jquery.com/jquery-migrate-3.0.0.js"></script>
 
 <nav class="navbar navbar-light bg-faded">
-  <h1 class="navbar-brand mb-0">FlickrMatch</h1>
+  <h1 class="navbar-brand mb-0 nav-brand">FlickrMatch</h1>
 </nav>
 
-<div class="container">
-  <div class="row justify-content-center">
+<div class="container-fluid">
+  <div class="row justify-content-center align-items-center">
     <h1>Find match through Flickr photos.</h1>
   </div>
-  <div class="row justify-content-center">
+  <div class="row justify-content-center align-items-center subtitle">
     <h5>Simply by paring Flickr usernames.</h5>
   </div>
   <form id="users" action="/userinfo" method="POST">
@@ -80,7 +42,7 @@
         <div class="input-group-prepend">
           <div class="input-group-text">@</div>
         </div>
-        <div class = "ui-widget">
+        <div class="ui-widget">
            <input class="form-control" id="username1" type="text" name="username1" placeholder="Flickr Username">
         </div>
       </div>
@@ -112,10 +74,6 @@
 <script>
 
   function showSubmition(results){
-
-    console.log(results);
-    console.log('hi there');
-
       if (results.username1_ck == 'fail' & results.username2_ck == 'fail'){
         alert("Invalid username 1 and username 2, please try again!");
         window.location.replace('/');
@@ -150,7 +108,7 @@
         $("#users").submit();
         console.log('success');
         }
-      }
+  }
   
 
   function submitUsername(evt){
@@ -162,14 +120,7 @@
     $.post("/user-check", formInputs, showSubmition);
   }
 
-
-  $("#check").on("click", submitUsername);
-
-  $('#username1').on('change', autoComplete);
-  $('#username2').on('change', autoComplete);
-
   function autoComplete() {
-
     var userPool = [
     'chrisimmler',
     'Alexander Lauterbach Photography',
@@ -189,31 +140,10 @@
   });
  };
 
+  $("#check").on("click", submitUsername);
 
-
-// var userInputs = {
-// "username1": $("#username1").val(),
-// "username2": $("#username2").val(),}; 
-// $.post("/user-photos", userInputs, function(results){
-//   console.log(results);
-
-  // var url_list1 = results.url_list1;
-  // var url_list2 = results.url_list2;
-  // var text1 = "";
-  // var i;
-  // for(i = 0; i < url_list1.length; i++){
-  //   text1 += "<img src=" + url_list1[i] + "></img>";
-  // }
-  // $('#photos-user1').html(text1);
-
-  // var j;
-  // var text2 = "";
-  // for(i = 0; i < url_list2.length; i++){
-  //   text2 += "<img src=" + url_list2[i] + "></img>";
-  // }
-  // $('#photos-user2').html(text2);
-
-          // $('#users').hide();
+  $('#username1').on('change keyup paste mouseup', autoComplete);
+  $('#username2').on('change keyup paste mouseup', autoComplete);
 
 </script>
 

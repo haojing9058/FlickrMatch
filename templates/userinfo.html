@@ -5,24 +5,33 @@
     margin-bottom: 0.7rem!important;
     margin-right: -1rem!important;
   }
+  .subtitle{
+    padding-bottom: 5px;
+    padding-bottom: 10px;
+  }
 
 </style>
 
 <nav class="navbar navbar-light bg-faded">
-  <a class="navbar-brand" href="/">FlickrMatch</a>
+  <a class="navbar-brand nav-brand" href="/">FlickrMatch</a>
 </nav>
-<div class="container">
-  <div class="row">
+<div class="container" style="width:100%">
+  <div class="row page-title">
     <h3> Best Nine on Flickr</h3>
+    <div class='action-button'>
+      <a id="word-match" class="btn btn-outline-dark" role="button" href="/tags-bubble?username1={{ username1 }}&username2={{ username2 }}&name1={{ name1 }}&name2={{ name2 }}"> Word Match </a>
+    </div>
   </div>
 
-  <div class='row float-md-right'>
+<!--   <div class='row float-md-right'>
     <a id="word-match" class="btn btn-outline-dark" role="button" href="/tags-bubble?username1={{ username1 }}&username2={{ username2 }}&name1={{ name1 }}&name2={{ name2 }}"> Word Match </a>
   </div>
-
+ -->
   <div class="row">
     <div class="col-md-5">
-      <h4>{{ name1 }}</h4>
+      <div class="subtitle">
+        <h4>{{ name1 }}</h4>
+      </div>
       {% if urls1|length < 9 %}
         <p> Have at least nine photos on Flickr for this game! </p>
       {% else %}
@@ -61,7 +70,9 @@
     <div class="col-md-1"></div>
 
     <div class="col-md-5">
-      <h4>{{ name2 }}</h4>
+      <div class="subtitle">
+        <h4>{{ name2 }}</h4>
+      </div>
       {% if urls2|length < 9 %}
         <p> Have at least nine photos on Flickr for this game! </p>
       {% else %}

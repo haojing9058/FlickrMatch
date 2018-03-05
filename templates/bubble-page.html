@@ -25,23 +25,34 @@
     width: 200px;
   }
 
-  .svg {
+/*  .svg {
     background-color: #D9D9D9;
-  }
+  }*/
 
   .recommendation-img {
     padding-right: 0px; 
     padding-left: 0px;
   }
 
+  .container-background {
+    background-size:cover;
+    /*background-image:url("static/pexels-photo-110941.jpeg"); */
+    background-position: center;
+    background-repeat: no-repeat; 
+    /*height: 1000px;*/
+    /*background-color: rgba(0, 0, 0, 0.2);*/
+}
+
 }
 </style>
 
+<style type="text/css">
+
+</style>
+
 <nav class="navbar navbar-light bg-faded ">
-  <div class="container-fluid">
-      <a class="navbar-brand" href="/">FlickrMatch</a>
-      <a class="navbar-text navbar-right" href="/userinfo">Best Nine</a>
-  </div>
+  <a class="navbar-brand nav-brand" href="/">FlickrMatch</a>
+  <a class="navbar-text navbar-right nav-brand" href="javascript:window.history.back();">Best Nine</a>
 </nav>
 
 <div id='values' 
@@ -51,14 +62,17 @@
   data-name2 = '{{ name2 }}'> 
 </div>
 
-<div class='container'>
-  <div class='row'>
-   <div id='match'><h4>{{ name1 }} and {{ name2 }} is {{ match_tags }} match in photo tags</h4></div>
+<div class='container container-background'>
+  <div class='row page-title'>
+    <div id='match'>
+      <h4>{{ name1 }} and {{ name2 }} is {{ match_tags }} match in photo tags</h4>
+    </div>
+    <div class='action-button'>
+      <a id="path-match" class="btn btn-outline-dark" role="button" href="/geo?username1={{ username1 }}&username2={{ username2 }}&name1={{ name1 }}&name2={{ name2 }}">Path Match</a>
+    </div>
   </div>
   
-  <div class='row float-md-right'>
-    <a id="path-match" class="btn btn-outline-dark" role="button" href="/geo?username1={{ username1 }}&username2={{ username2 }}&name1={{ name1 }}&name2={{ name2 }}">Path Match</a>
-  </div>
+
 
   <!-- <div class="styled-select green select-rounded"> -->
   <!-- </div> -->
@@ -81,6 +95,7 @@
   <div class='row'>
     <div id='recommendation'></div>
   </div>
+</div>
 
 <script src='https://cdnjs.cloudflare.com/ajax/libs/spin.js/2.0.1/spin.min.js'></script>
 
@@ -121,7 +136,7 @@
           var matchscore = results.match_description;
         }
 
-      $('#match').html(`<h4>${name1} and ${name2} is ${matchscore} match in photo ${selected}</h4>`);
+      $('#match').html(`<h4><span style="color: #4484CE">${name1}</span> and <span style="color:#F9CF00">${name2}</span> is ${matchscore} match in photo ${selected}</h4>`);
 
       d3.select("svg").remove();
       updateBubble(`static/${selected}.csv`);
@@ -167,9 +182,12 @@
       maxRadius = 20;
 
   var color = d3.scale.ordinal()
-        .range([ "#F9CF00", '#F19F4D', '#4484CE']);
+        .range([ '#4484CE', "#F9CF00", '#F19F4D']);
+        // .range(["#6EC4DB", "FEDC3D", "#FEA680"]);
+        // .range(["93C178", "#465C8B", "F7EF6A"]);
 
   var opacity = d3.scale.ordinal()
+        // .range([1,1,1])
         .range([0.8, 0.8, 0.8])
 
   //D3 function that display given textUrl
@@ -210,12 +228,15 @@
           .on("tick", tick)
           .start();
 
-      var svg = d3.select("#graph").append("svg");
-
-      // svg.selectAll("*").remove();
-
-      svg.attr("width", width)
+      var svg = d3.select("#graph").append("svg")
+          .attr("width", width)
           .attr("height", height);
+
+      //   svg.append("rect")
+      // .attr("width", "100%")
+      // .attr("height", "100%")
+      // .attr("fill", "#D9D9D9")
+      // .style("opacity", 0.4);
 
       var div = d3.select("#graph").append("div") 
         .attr("class", "tooltip")       

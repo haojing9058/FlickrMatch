@@ -12,20 +12,37 @@
   }
 
   circle {
-    fill-opacity: .6;
+    fill-opacity: .8;
     stroke: #fff;
   }
+  .navbar-nav {
+      flex-direction: row;
+    }
+    
+    .nav-link {
+      padding-right: .5rem !important;
+      padding-left: .5rem !important;
+    }
 
+  .recommendation-img {
+    padding-right: 0px; 
+    padding-left: 0px;
+  }
 </style>
 
 <nav class="navbar navbar-light bg-faded">
-  <a class="navbar-brand" href="/">FlickrMatch</a>
-  <!-- fix hyperlink -->
-  <!-- <a class="navbar-text navbar-right" href="/userinfo">Best Nine</a>
-  <a class="navbar-text navbar-right" href="/tags-bubble"">Word Match</a> -->
+   <div class="container-fluid">
+      <a class="navbar-brand" href="/">FlickrMatch</a>
+      <ul class="navbar-nav ml-autl">
+        <li class="nav-item">
+          <a class="nav-link" href="javascript:window.history.go(-2);">Best Nine</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="javascript:window.history.back();">Word Match</a>
+        </li>
+      </ul>   
+    </div>
 </nav>
-
-
 
 <div id='users' 
       data-username1='{{ username1 }}'
@@ -34,7 +51,7 @@
 
 <div class='container'>
   <div class='row'>
-   <div id='match'><h4><span id='name1' style="color: #F9CF00">{{ name1 }} </span>and <span id='name2' style="color:#F19F4D" >{{ name2 }}</span>'s photo path</h4></div>
+   <div id='match'><h4><span id='name1' style="color: #4484CE">{{ name1 }} </span>and <span id='name2' style="color: #F9CF00" >{{ name2 }}</span>'s photo path</h4></div>
   </div>
 
   <div class='row'>
@@ -75,7 +92,8 @@ function loadRecommendation(results){
   var text = "";
   var i;
   for(i = 0; i < urls.length; i++){
-    text += "<img id=img" + i.toString() +  " src='" + urls[i] + "' </img>";
+    // text += "<img id=img" + i.toString() +  " src='" + urls[i] + "' </img>";
+    text += `<img src='${urls[i]}' class="col-md-1 recommendation-img"></img>`;
   }
   $('#recommendation').html(text);
   $('button').hide();
@@ -100,10 +118,13 @@ function loadMap(dataFilePath){
           .scale(140);
   var path = d3.geo.path()
           .projection(xy);
+  var color1 = "#4484CE";
+  var color2 = "#F9CF00";
+  var colorCommon = "#F19F4D"; 
 
   $(document).ready(function() {
     $("#slider").slider({
-      value:2017,
+      value:2018,
       min: 2010,
       max: 2018,
       step: 1,
@@ -135,14 +156,14 @@ function loadMap(dataFilePath){
       .enter().append("svg:path")
       .attr("d", path)
       .on("mouseover", function(d) {
-          d3.select(this).style("fill","#6C0")
-              .append("svg:title")
-              .text(d.properties.name);})
+          d3.select(this)
+          .style("fill",colorCommon)
+          .style("opacity", 0.8);})
       .on("mouseout", function(d) {
           d3.select(this).style("fill","#ccc");})
   });
 
-  var scalefactor=2;
+  var scalefactor=1.8;
 
   d3.csv(dataFilePath, function(data) {
 
@@ -152,12 +173,12 @@ function loadMap(dataFilePath){
     .append("svg:circle")
     .attr("cx", function(d, i) { return xy([+d["longitude"],+d["latitude"]])[0]; })
     .attr("cy", function(d, i) { return xy([+d["longitude"],+d["latitude"]])[1]; })
-    .attr("r",  function(d) { return (+d["2010"])*scalefactor; })
+    .attr("r",  function(d) { return (+d["2018"])*scalefactor; })
     .style("fill", function(d) {
       var user1 =  $('#users').data('username1');
       var user2 =  $('#users').data('username2');
-      if (d["user"] === user1) {return '#F9CF00'};
-      if (d["user"] === user2) {return '#F19F4D'};
+      if (d["user"] === user1) {return color1};
+      if (d["user"] === user2) {return color2};
       })
     .on("mouseover", function(d, i) {
         // d3.select(this).style("fill","#FC0");
@@ -166,7 +187,6 @@ function loadMap(dataFilePath){
             .attr("x", function() { return xy([+d["longitude"],+d["latitude"]])[0]; })
             .attr("y", function() { return xy([+d["longitude"],+d["latitude"]])[1]; })
             .text(function() { return d["country_name"] + ": " + Number(d[document.getElementById("year").value]); });
-
       })
     .on("mouseout", function(d, i) {
         // d3.select(this).style("fill","steelblue");
@@ -184,8 +204,8 @@ function loadMap(dataFilePath){
       .style("fill", function(d) {
           var user1 =  $('#users').data('username1');
           var user2 =  $('#users').data('username2');
-          if (d["user"] === user1) {return 'steelblue'};
-          if (d["user"] === user2) {return 'red'};
+          if (d["user"] === user1) {return color1};
+          if (d["user"] === user2) {return color2};
       })
     }
   });
