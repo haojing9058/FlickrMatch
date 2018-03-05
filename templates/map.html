@@ -66,7 +66,9 @@
 
 <div class='container'>
   <div class='row page-title'>
-   <div id='match'><h4><span id='name1' style="color: #4484CE">{{ name1 }} </span>and <span id='name2' style="color: #F9CF00" >{{ name2 }}</span>'s photo path</h4></div>
+   <div id='match'>
+    <h4><span id='name1' style="color: #4484CE">{{ name1 }} </span>and <span id='name2' style="color: #F9CF00" >{{ name2 }}</span>'s photo path</h4>
+    </div>
   </div>
 
   <div class='row'>
@@ -178,7 +180,7 @@ function loadMap(dataFilePath){
           d3.select(this).style("fill","#ccc");})
   });
 
-  var scalefactor=1.8;
+  var scalefactor=2;
 
   d3.csv(dataFilePath, function(data) {
 

@@ -159,6 +159,7 @@ def recommendation_by_geo(lat, lon, per_page=36):
     params['lon'] = lon
     params['sort'] = 'interestingness-desc'
     params['content_type'] = 1
+    params['accuracy'] = 3
     # params['machine_tags']
     # params['machine_tags_mode']
     params['extras'] =','.join(['description','date_taken', 'owner_name', 'geo', 

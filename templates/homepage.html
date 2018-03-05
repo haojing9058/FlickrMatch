@@ -11,7 +11,35 @@
 }
     .subtitle {
       padding-bottom: 15px;
+      font-family: "Montserrat";
+      font-style: italic;
+      font-weight: bold;
+      font-size: 1.5rem;
+      color: #4d4d4d;
     }
+
+    .maintitle{
+      margin-left: 30px;
+      font-family: "Montserrat";
+      font-weight: bold;
+      font-size: 3rem;
+      color: #4d4d4d;
+    }
+
+    #check{
+      margin-left: -100px;
+    }
+
+    #users{
+      margin-left: 100px;
+    }
+/*
+    .h1 .main-title{
+    font-family: "Montserrat";
+    font-weight: bold;
+    font-size: 3rem;
+    color: #4d4d4d;
+    }*/
 
 </style>
 
@@ -24,15 +52,15 @@
 </nav>
 
 <div class="container-fluid">
-  <div class="row justify-content-center align-items-center">
-    <h1>Find match through Flickr photos.</h1>
+  <div class="row justify-content-center">
+    <h1 class="maintitle">Find match through Flickr photos.</h1>
   </div>
-  <div class="row justify-content-center align-items-center subtitle">
-    <h5>Simply by paring Flickr usernames.</h5>
+  <div class="row justify-content-center">
+    <h5 class="subtitle">Simply by paring Flickr usernames.</h5>
   </div>
   <form id="users" action="/userinfo" method="POST">
     <div class="form-group row justify-content-center">
-      <label for="name1" class="col-md-1 col-form-label"> Player 1 </label>
+      <!-- <label for="name1" class="col-md-1 col-form-label"> Player 1 </label> -->
 
       <div class="col-md-3 ui-widget">
         <input class="form-control" type="text" id = "name1" name="name1" placeholder="Preferred Name">
@@ -43,16 +71,16 @@
           <div class="input-group-text">@</div>
         </div>
         <div class="ui-widget">
-           <input class="form-control" id="username1" type="text" name="username1" placeholder="Flickr Username">
+           <input class="form-control" id="username1" type="text" name="username1" placeholder="Flickr Username" style="width: 300px;">
         </div>
       </div>
     </div>
 
     <div class="form-group row justify-content-center">
-      <label for="name2" class="col-md-1 col-form-label"> Player 2 </label>
+      <!-- <label for="name2" class="col-md-1 col-form-label"> Player 2 </label> -->
 
       <div class="col-md-3 ui-widget">
-        <input class="form-control" type="text" id = "name2" name="name2" placeholder="Preferred Name">
+        <input class="form-control" type="text" id = "name2" name="name2" placeholder="Another Preferred Name">
       </div>
 
       <div class="input-group col-md-4" >
@@ -60,7 +88,7 @@
           <div class="input-group-text">@</div>
         </div>
         <div class = "ui-widget">
-           <input class="form-control" id ="username2" type="text" name="username2" placeholder="Flickr Username">
+           <input class="form-control" id ="username2" type="text" name="username2" placeholder="Another Flickr Username" style="width: 300px;">
         </div>
       </div>
     </div>
@@ -121,22 +149,377 @@
   }
 
   function autoComplete() {
-    var userPool = [
-    'chrisimmler',
-    'Alexander Lauterbach Photography',
-    'Ed Post',
-    'Stephen Hunt61',
-    'poludziber1',
-    'StephAnna :-)',];
+    var userPool = ['Ahaz Atif',
+ 'AhillAdam88',
+ 'Alastairpowriesmith',
+ 'Alberto-8aPhoto',
+ 'Alexander Lauterbach Photography',
+ 'AndreG87',
+ 'Andrew David Photos',
+ 'Andy Oleksy',
+ 'Atshirtaweek',
+ 'AverTiesPhotos',
+ 'Axle Zhang',
+ 'B. Weihe Photography',
+ 'Ben_Cheng',
+ 'Bill E2011',
+ 'Biserica Ortodoxa Romana.Vigo.',
+ 'BobbyFerkovich',
+ 'Botolski1',
+ 'Brodyaga.com',
+ 'Bruno Magnum',
+ 'Bryce Womeldurf',
+ 'CW Quah',
+ 'Cagius',
+ 'Ciel Sam',
+ 'DRogers07',
+ 'Daniel.35690',
+ 'DaveMo2017',
+ 'DerAblichter',
+ 'Deyed6o9',
+ 'Dimitrie Postelnicu',
+ 'Drew Kellar',
+ 'Dzhonis',
+ 'EF One',
+ 'ELebro',
+ 'Elliot Bick',
+ 'Eric Gross',
+ 'Ezry A Rahman',
+ 'Fede Duran',
+ 'Fencejo',
+ 'Fernando Oliveira (Fotografias)',
+ 'FlynnLovesPhotography',
+ 'Franklin Photographyau',
+ 'Funny Cyclist',
+ 'Gabrielle Nikitin',
+ 'Gamified_rover',
+ 'Garrett.Chapin Photography',
+ 'Geminichic31',
+ 'Geoff Borg',
+ 'Ginger H Robinson',
+ 'Graham Paton',
+ 'Groszq',
+ 'Guido Robino',
+ 'Gwadalifou-photo',
+ 'Holger Glaab',
+ 'Ingunn Eriksen',
+ 'JagguBhai30',
+ 'Jahny',
+ 'Jake(731)',
+ 'Jason Witwicker',
+ 'Jason_Hood',
+ 'Jochem.Herremans',
+ 'John Carlo Fandialan',
+ 'John Kramar',
+ 'Jonaskool',
+ 'Julien Meyrat',
+ 'KarinWeinzierl',
+ 'Karol Kozak',
+ 'KelmiRogue',
+ 'Kevin Drury',
+ 'Kinsei TGS',
+ 'Kit Sidlow',
+ 'Knightly iMages',
+ 'Kummerle',
+ 'L.HACKSPIEL',
+ 'LM Photographic',
+ 'LeWelsch Photo',
+ 'Lerro Photography',
+ 'Liaki my world',
+ 'LukSusPhoto',
+ 'Luke Forrest',
+ 'Mariana Dussel',
+ 'MarkUStein',
+ 'Marko Pennanen',
+ 'Marta Torre',
+ 'Martinionice',
+ 'Mervyn Marshall',
+ 'Mich73b',
+ 'Michel-84',
+ 'Mike and Dee Brown',
+ 'Modkuse',
+ 'Moises.Marteva',
+ 'Mylene Gauthier',
+ 'NERI GONZALEZ',
+ 'NanNanPig',
+ 'Nene Minetti',
+ 'New York Engineers',
+ 'NicholasAlp22',
+ 'Nick Tinl',
+ 'Nilm8tic',
+ 'Nils Scarbro',
+ 'Onkyo21',
+ 'Open_Inside',
+ 'P. Marione',
+ 'Pakistan Super League',
+ 'Paul Celus',
+ 'Paul and Nalva',
+ 'Peloi Photography',
+ 'Perfect Gnat',
+ 'Photonistan',
+ 'Pico 69',
+ 'Product in progress',
+ 'R. Henne',
+ 'Rafa.E',
+ 'Rakib Hasan Bul Bul',
+ 'Reflexion!',
+ 'Ricardo Beelt',
+ 'Riccartonii',
+ 'Rich Lonardo Photo',
+ 'Ringo_C',
+ 'Rorroemotion',
+ 'Ruby Tintur',
+ 'Rudi Verspoor',
+ 'S l a w e k',
+ 'SANDRA CREATIONS',
+ 'SOMBIR DHAKA',
+ 'Saan Martins',
+ 'Sam Wagner Photography',
+ 'Scoiattolo1982',
+ 'Sheldon Slusser',
+ 'SherriKCT',
+ 'Silence & Silhouette',
+ 'SilentInTheShade',
+ 'Soni Rajesh',
+ 'Sotiris Papadimas',
+ 'Stephen Huen',
+ "Steve O'Day",
+ 'Steven Dpa',
+ 'T Lj',
+ 'Tanjid Rahman Udoy',
+ 'Tano Marino',
+ 'Ted Holm',
+ 'Terrigal Australia',
+ 'The Phoenix Girl',
+ 'The Photo Expert',
+ 'Tuscany_Landscapes',
+ 'Vibhutius',
+ 'Visible Landscape',
+ 'WilliWilli1993',
+ 'Working Image Photography',
+ 'YL168',
+ 'Zeroeight Fifthteen',
+ 'abdurrahmanademolu1',
+ 'adamdera',
+ 'adonisadonis',
+ 'aduscedes',
+ 'agialopoulos',
+ 'agm023',
+ 'agustinamartina',
+ 'aherne',
+ 'ainulislam',
+ 'alc.fotos',
+ 'alfatih1020',
+ 'alwkiko',
+ 'am2online25',
+ 'amithanuradha',
+ 'andra2344',
+ 'anmisz',
+ 'annapoidomani.97',
+ 'anthrx',
+ 'aperry1958',
+ 'apochkun',
+ 'ariellsimon',
+ 'arijanamarinkovic',
+ 'artistofunknown',
+ 'benjamindeyoung',
+ 'berniebrennan',
+ 'bgboybrad',
+ 'biasslover',
+ 'blyenbergh',
+ 'bobbykwibus',
+ 'bobchesarek',
+ 'breakbeat',
+ 'camaradu',
+ 'camillocox',
+ 'capucine.dotte',
+ 'cef_oak',
+ 'chrisimmler',
+ 'chrisinplymouth',
+ 'christianvu1',
+ 'chrplr',
+ 'cocoi_m',
+ 'coffee breack',
+ 'colinbaterip',
+ 'corineouellet',
+ 'crazyeasyfatloss',
+ 'd.vitali',
+ 'davebracco',
+ 'davespeight982',
+ 'decorace51',
+ 'derek.tom24',
+ 'dimitri.gronemberger',
+ 'dmetz photography-Creationsbyds',
+ 'donutluvsleo',
+ 'dtankosic',
+ 'eawok',
+ 'edgarwever',
+ 'edmond gusar',
+ 'edrobson1970',
+ 'edutango',
+ 'emanuelcamara',
+ 'enixshen1',
+ 'enochawede',
+ 'erica-kalmeta',
+ 'etisdefo',
+ 'exercise97',
+ 'fabio6510',
+ 'fandino18',
+ 'fidel1620guandique1',
+ 'flamingo spiderman',
+ 'fotosdrx',
+ 'frankgarces1',
+ 'gabicuff1',
+ 'gato_preto_',
+ 'gderifield2122',
+ 'ger.willemse',
+ 'giannizigante',
+ 'gmmech',
+ 'hamze.beati',
+ 'hasanmehedy',
+ 'hassamulhasan0',
+ 'henningpietsch',
+ 'hhlegra8896',
+ 'hiliusir',
+ 'hoffler_pictorials',
+ 'iancook95',
+ 'iyk314159',
+ 'jacquemart',
+ 'jakeiwang5457',
+ 'jamatsea1',
+ 'janvaljan1',
+ 'jarpaw66',
+ 'jcjc100',
+ 'jead980',
+ 'jefffarley154',
+ 'jeremy.grasset',
+ 'johannjuenger',
+ 'johnfranky_t',
+ 'jornvk',
+ 'juanmzgz',
+ 'juanpcastano',
+ 'julinawn',
+ 'kantroemvisoth',
+ 'katiegesseck',
+ 'katya.bubnova',
+ 'kaushik_ppe',
+ 'king.of.jungle',
+ 'klausge',
+ 'koczkodan',
+ 'kristinaferraraphotography',
+ 'kristinamckay99',
+ 'kwok0000',
+ 'laurent.smet',
+ 'lenterojoproductions',
+ 'limfotos',
+ 'linke64',
+ 'liss.cook',
+ 'lrobertg1',
+ 'lucassoltys',
+ 'lucinda love',
+ 'lufcwls',
+ 'm.faraz87',
+ 'madhurashcards1983',
+ 'mar.carannante',
+ 'marco_catullo',
+ 'marcostetter',
+ 'markjones bris',
+ 'marlazaro1',
+ 'maruf1122345',
+ 'marystraat',
+ 'mayledesma',
+ 'meganysweet',
+ 'mesocyclone70',
+ 'mike.r.reiss',
+ 'mikewalter3',
+ 'mirianfernandezescudero',
+ 'mixnart',
+ 'mjhedge',
+ 'moenkopi8',
+ 'moni.asiri',
+ 'monicateo',
+ 'mosheja',
+ 'mouzaliamine',
+ 'mt_diaz',
+ 'mucahits',
+ 'murat_belge',
+ 'n80426',
+ 'naddieuk',
+ 'najjarobinson',
+ 'nickymstevenson',
+ 'nicolaorlandini',
+ 'nimitrastogi',
+ 'of GASS',
+ 'ottaarr',
+ 'patricia fliedel',
+ 'patriciaanderson91',
+ 'patricio.c',
+ 'patrickdeby',
+ 'periStatic',
+ 'philholroyd.co.uk',
+ 'phillloyd558',
+ 'photoholiic',
+ 'radomirmor',
+ 'ralf.kuschka',
+ 'reisilennuk',
+ 'remo.daut',
+ 'rgbsandman127',
+ 'richardstoby4',
+ 'robertoburchi1',
+ 'ronYuenaa',
+ 'roxienina',
+ 'royluvsass',
+ 's.cotton929',
+ 'sab89',
+ 'sakarina_r',
+ 'santiagovj',
+ 'schmiduwe89',
+ 'shahkajal978',
+ 'shingouz13',
+ 'shuddabrudda',
+ 'sirentale',
+ 'sm0ok3',
+ 'smartie.matthew',
+ 'sofiakourtoglou',
+ 'sphinx60',
+ 'squarenothing_de',
+ 'ssatumarika',
+ 'stephardel16',
+ 'talkingvisual',
+ 'tan.munmai',
+ 'tasha.eliya',
+ 'tom.devoll',
+ 'tomRun imaz',
+ 'toni.perezpadilla',
+ 'tramsteer',
+ 'tulak56',
+ 'uzidoozy',
+ 'valery_pokotylo',
+ 'vasilis29',
+ 'vigarillo',
+ 'wangdang591',
+ 'winston.chou',
+ 'wuppi.74',
+ 'xrng1',
+ 'yurito1',
+ 'zzugu'];
 
   $( "#username1" ).autocomplete({
-     source: userPool,
-     autoFocus:true
+     source: function( request, response ) {
+        var matcher = new RegExp( "^" + $.ui.autocomplete.escapeRegex(request.term ), "i" );
+        response( $.grep( userPool, function( item ){
+            return matcher.test( item );
+        }) );
+      }
   });
   
   $( "#username2" ).autocomplete({
-     source: userPool,
-     autoFocus:true
+     source: function( request, response ) {
+        var matcher = new RegExp( "^" + $.ui.autocomplete.escapeRegex(request.term ), "i" );
+        response( $.grep( userPool, function( item ){
+            return matcher.test( item );
+        }) );
+      }
   });
  };
 
