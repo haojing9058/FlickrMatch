@@ -1,109 +1,70 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <style type="text/css">
-    body {
-       font-family: Arial, Helvetica, sans-serif;
-    }
+{% extends 'base.html' %}
+{% block content %}
 
-    .footer {
-        color: #888888;
-        font-size: 13px;
-        text-align: right;
-    }
+<style type="text/css">
+  body {
+     font-family: Arial, Helvetica, sans-serif;
+  }
 
-    #states path {
-      fill: #ccc;
-      stroke: #fff;
-    }
+  #states path {
+    fill: #ccc;
+    stroke: #fff;
+  }
 
-/*    span.#name1 {
-      color: blue;
-    }
+  circle {
+    fill-opacity: .6;
+    stroke: #fff;
+  }
 
-    span.#name2 {
-      color: red;
-    }
-*/
-    circle {
-      fill-opacity: .6;
-      stroke: #fff;
-    }
+</style>
 
-/*    .tooltip {
-    position: relative;
-    display: inline-block;
-}
+<nav class="navbar navbar-light bg-faded">
+  <a class="navbar-brand" href="/">FlickrMatch</a>
+  <!-- fix hyperlink -->
+  <!-- <a class="navbar-text navbar-right" href="/userinfo">Best Nine</a>
+  <a class="navbar-text navbar-right" href="/tags-bubble"">Word Match</a> -->
+</nav>
 
-.tooltip .tooltiptext {
-    visibility: hidden;
-    width: 120px;
-    background-color: #555;
-    color: #fff;
-    text-align: center;
-    border-radius: 6px;
-    padding: 5px 0;
-    position: absolute;
-    z-index: 1;
-    bottom: 125%;
-    left: 50%;
-    margin-left: -60px;
-    opacity: 0;
-    transition: opacity 0.3s;
-}
 
-.tooltip .tooltiptext::after {
-    content: "";
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    margin-left: -5px;
-    border-width: 5px;
-    border-style: solid;
-    border-color: #555 transparent transparent transparent;
-}
 
-.tooltip:hover.tooltiptext {
-    visibility: visible;
-    opacity: 1;
-}*/
-
-  </style>
- <!--  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> -->
-  <!-- <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script> -->
-  <script src="https://code.jquery.com/ui/1.10.4/jquery-ui.min.js"></script>
-  <link rel="stylesheet" type="text/css" href="https://code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css" />
-  <script src="http://d3js.org/d3.v2.js"></script>
-
-</head>
-
-<body>
-
-<h2> The Countries <span id='name1' style="color: steelblue">{{ name1 }} </span>and <span id='name2' style="color: red">{{ name2 }}</span> Have Been </h2>
 <div id='users' 
       data-username1='{{ username1 }}'
       data-username2='{{ username2 }}'>
 </div>
-<p>
-  <label for="year">Year :</label>
-  <input type="text" id="year" style="border:0; color:#f6931f; font-weight:bold; " />
-</p>
-<div id="slider" style="width: 200px;"></div>
 
-<div id="graph"></div>
+<div class='container'>
+  <div class='row'>
+   <div id='match'><h4><span id='name1' style="color: #F9CF00">{{ name1 }} </span>and <span id='name2' style="color:#F19F4D" >{{ name2 }}</span>'s photo path</h4></div>
+  </div>
 
-<div>
-  <button id='r-button'> See Recommendation </button>
-  <div id='recommendation'>
+  <div class='row'>
+    <p style="margin-bottom: 0;">
+      <label for="year">Year :</label>
+      <input type="text" id="year" style="border:0; width: 50px;"/>
+    </p>
+  </div>
+
+  <div class="row">
+    <div id="slider" style="width: 200px;"></div>
+  </div>
+
+  <div class="row">
+    <div id="graph"></div>
+  </div>
+
+  <div class='row justify-content-center'>
+    <button id='recommendation-button' type="button" class="btn btn-outline-dark" > Recommendation </button>
+  </div>
+
+  <div class="row">
+    <div id='recommendation'>
   </div>
 </div>
 
-  <a href="/tags-bubble"> Word Match </a> <br>
-
-  <a href="/"> New Match </a>
+<script src="https://code.jquery.com/ui/1.10.4/jquery-ui.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css" />
 
 <script type="text/javascript">
-
 
 loadMap("static/geo.csv");
 
@@ -116,16 +77,8 @@ function loadRecommendation(results){
   for(i = 0; i < urls.length; i++){
     text += "<img id=img" + i.toString() +  " src='" + urls[i] + "' </img>";
   }
-  // class='tooltip' ><span class='tooltiptext'> country name </span>
   $('#recommendation').html(text);
   $('button').hide();
-
-  // for(i = 0; i < urls.length; i++){
-  //   $("#img"+i.toString()).mouseover(function(){
-  //     console.log('selected');
-  //     $("#img"+i.toString()).
-  //   })
-  // }
 }
 
 function getRecommendation() {
@@ -133,7 +86,7 @@ function getRecommendation() {
 }
 
 $(document).ready(function(){
-    $('#r-button').click(function(){
+    $('#recommendation-button').click(function(){
       getRecommendation();
     });
   })
@@ -141,10 +94,10 @@ $(document).ready(function(){
 
 function loadMap(dataFilePath){
 
-  var w = 900;
-  var h = 350;
+  var w = 1140;
+  var h = 500;
   var xy = d3.geo.equirectangular()
-          .scale(700);
+          .scale(140);
   var path = d3.geo.path()
           .projection(xy);
 
@@ -203,8 +156,8 @@ function loadMap(dataFilePath){
     .style("fill", function(d) {
       var user1 =  $('#users').data('username1');
       var user2 =  $('#users').data('username2');
-      if (d["user"] === user1) {return 'steelblue'};
-      if (d["user"] === user2) {return 'red'};
+      if (d["user"] === user1) {return '#F9CF00'};
+      if (d["user"] === user2) {return '#F19F4D'};
       })
     .on("mouseover", function(d, i) {
         // d3.select(this).style("fill","#FC0");
@@ -238,7 +191,4 @@ function loadMap(dataFilePath){
   });
 }
 </script>
-
-</body>
-
-</html>
+{% endblock %}

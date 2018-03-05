@@ -92,7 +92,7 @@ def seed_photos_by_userid(user_id, sort='interesting', per_page=100):
 # tags, tag_mode, text, sort, content_type=1, machine_tags, media='photo', per_page=et
 def recommendation_by_text(tags, text, per_page=36):
     """Get most relavent photos based on given text info(tags, title and description)
-    tags: a comma-delimited list of tags
+    tags: ata comma-delimited list of tags
     text: list of words
     Add the photos into db if it's not in it, and return a list of photo_id.
     """
@@ -100,7 +100,8 @@ def recommendation_by_text(tags, text, per_page=36):
     params['method'] = "flickr.photos.search"
     params['tags'] = tags
     params['tag_mode'] = 'any'
-    params['text'] = text
+    # params['text'] = text
+    params['text'] = []
     params['sort'] = 'interestingness-desc'
     params['content_type'] = 1
     # params['machine_tags']

@@ -1,7 +1,60 @@
 {% extends 'base.html' %}
 {% block content%}
 
-<link href = "https://code.jquery.com/ui/1.8.23/themes/smoothness/jquery-ui.css" rel = "stylesheet">
+<style type="text/css">
+    /*style for autocomplete*/
+    .ui-autocomplete {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 1000;
+  float: left;
+  display: none;
+  min-width: 160px;
+  _width: 160px;
+  padding: 4px 0;
+  margin: 2px 0 0 0;
+  list-style: none;
+  background-color: #ffffff;
+  border-color: #ccc;
+  border-color: rgba(0, 0, 0, 0.2);
+  border-style: solid;
+  border-width: 1px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  -moz-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  -webkit-background-clip: padding-box;
+  -moz-background-clip: padding;
+  background-clip: padding-box;
+  *border-right-width: 2px;
+  *border-bottom-width: 2px;
+
+  .ui-menu-item > a.ui-corner-all {
+    display: block;
+    padding: 3px 15px;
+    clear: both;
+    font-weight: normal;
+    line-height: 18px;
+    color: #555555;
+    white-space: nowrap;
+
+    &.ui-widget-content, &.ui-state-focus {
+      color: #ffffff;
+      text-decoration: none;
+      background-color: #0088cc;
+      border-radius: 0px;
+      -webkit-border-radius: 0px;
+      -moz-border-radius: 0px;
+      background-image: none;
+    }
+  }
+}
+</style>
+
+<!-- <link href = "https://code.jquery.com/ui/1.8.23/themes/smoothness/jquery-ui.css" rel = "stylesheet"> -->
 <script src = "https://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
 
 <nav class="navbar navbar-light bg-faded">
@@ -51,7 +104,7 @@
     </div>
 
     <div class="row justify-content-center my-4">
-      <button type="submit" id="check" class="btn btn-primary btn-lg">Match</button>
+      <button type="submit" id="check" class="btn btn-outline-dark btn-lg">Match</button>
     </div>
   </form>
 </div>
@@ -112,384 +165,18 @@
 
   $("#check").on("click", submitUsername);
 
+  $('#username1').on('change', autoComplete);
+  $('#username2').on('change', autoComplete);
+
   function autoComplete() {
 
-    var userPool = ['juanpcastano',
-     'NanNanPig',
-     'Ben_Cheng',
-     'radomirmor',
-     'roxienina',
-     'Knightly iMages',
-     'davespeight982',
-     'maruf1122345',
-     'xrng1',
-     'Holger Glaab',
-     'madhurashcards1983',
-     'tramsteer',
-     'naddieuk',
-     'hamze.beati',
-     'ottaarr',
-     'jefffarley154',
-     'christianvu1',
-     'Fencejo',
-     'WilliWilli1993',
-     'jakeiwang5457',
-     'Fede Duran',
-     'rgbsandman127',
-     'DerAblichter',
-     'amithanuradha',
-     'AndreG87',
-     'linke64',
-     'nickymstevenson',
-     'jarpaw66',
-     'Steven Dpa',
-     'Liaki my world',
-     'Cagius',
-     'lucinda love',
-     'am2online25',
-     'Sotiris Papadimas',
-     'mixnart',
-     'katya.bubnova',
-     'Marta Torre',
-     'ronYuenaa',
-     'annapoidomani.97',
-     'colinbaterip',
-     'Rakib Hasan Bul Bul',
-     'jamatsea1',
-     'tulak56',
-     'Rudi Verspoor',
-     'donutluvsleo',
-     'Marko Pennanen',
-     'Mike and Dee Brown',
-     'apochkun',
-     'Alastairpowriesmith',
-     'Geoff Borg',
-     'vigarillo',
-     'Axle Zhang',
-     'Tano Marino',
-     'aperry1958',
-     'kwok0000',
-     'frankgarces1',
-     'julinawn',
-     'ssatumarika',
-     'Soni Rajesh',
-     'jornvk',
-     'patrickdeby',
-     'richardstoby4',
-     'KelmiRogue',
-     'Julien Meyrat',
-     'coffee breack',
-     'tomRun imaz',
-     'Dzhonis',
-     'lucassoltys',
-     'Michel-84',
-     'Ted Holm',
-     'yurito1',
-     'S l a w e k',
-     'hhlegra8896',
-     'laurent.smet',
-     'moenkopi8',
-     'edgarwever',
-     'Paul Celus',
-     'mar.carannante',
-     'exercise97',
-     'philholroyd.co.uk',
-     'reisilennuk',
-     'Rorroemotion',
-     'Kit Sidlow',
-     'Dimitrie Postelnicu',
-     'hiliusir',
-     'kaushik_ppe',
-     'John Carlo Fandialan',
-     'lrobertg1',
-     'berniebrennan',
-     'vasilis29',
-     'Nils Scarbro',
-     'johannjuenger',
-     'talkingvisual',
-     'maruf1122345',
-     'Nene Minetti',
-     'ger.willemse',
-     'New York Engineers',
-     'John Kramar',
-     'Peloi Photography',
-     'giannizigante',
-     "Steve O'Day",
-     'Ahaz Atif',
-     'iancook95',
-     'Cagius',
-     'I am OI',
-     'Mariana Dussel',
-     'shingouz13',
-     '#Eddie',
-     'sab89',
-     'toni.perezpadilla',
-     'king.of.jungle',
-     'Rich Lonardo Photo',
-     'Andy Oleksy',
-     'Gwadalifou-photo',
-     'santiagovj',
-     'Riccartonii',
-     'AhillAdam88',
-     'Eric Gross',
-     'Andrew David Photos',
-     'Elliot Bick',
-     'murat_belge',
-     'lufcwls',
-     'klausge',
-     'agustinamartina',
-     'etisdefo',
-     'enixshen1',
-     'robertoburchi1',
-     'Graham Paton',
-     'jead980',
-     'dtankosic',
-     'benjamindeyoung',
-     'Mervyn Marshall',
-     'andra2344',
-     'JagguBhai30',
-     'Modkuse',
-     'LM Photographic',
-     'Alberto-8aPhoto',
-     'agialopoulos',
-     'mt_diaz',
-     'Brodyaga.com',
-     'cef_oak',
-     'yurito1',
-     'Scoiattolo1982',
-     'chrplr',
-     'Ricardo Beelt',
-     'aherne',
-     'shahkajal978',
-     'henningpietsch',
-     'Kummerle',
-     'R. Henne',
-     'SANDRA CREATIONS',
-     'mikewalter3',
-     'www.chriskench.photography',
-     'Ezry A Rahman',
-     'erica-kalmeta',
-     'monicateo',
-     'breakbeat',
-     'Nilm8tic',
-     'juanmzgz',
-     'aduscedes',
-     'EF One',
-     'enochawede',
-     'sm0ok3',
-     'Perfect Gnat',
-     'T Lj',
-     'sofiakourtoglou',
-     'capucine.dotte',
-     'mayledesma',
-     'Biserica Ortodoxa Romana.Vigo.',
-     'emanuelcamara',
-     'mouzaliamine',
-     'Moises.Marteva',
-     'LeWelsch Photo',
-     'nicolaorlandini',
-     'fotosdrx',
-     '106415951',
-     'gato_preto_',
-     'Pico 69',
-     'iyk314159',
-     'Lerro Photography',
-     'johnfranky_t',
-     'chrisinplymouth',
-     'Onkyo21',
-     'tasha.eliya',
-     'Nick Tinl',
-     'Saan Martins',
-     'anthrx',
-     '1965f.rank',
-     'mesocyclone70',
-     'R. Henne',
-     'Bryce Womeldurf',
-     'CW Quah',
-     'Elliot Bick',
-     'Funny Cyclist',
-     'dimitri.gronemberger',
-     'agm023',
-     'Groszq',
-     'squarenothing_de',
-     'Kevin Drury',
-     'garthhilton...Read the profile.',
-     'mjhedge',
-     'Guido Robino',
-     'enixshen1',
-     'yurito1',
-     'Working Image Photography',
-     'limfotos',
-     'Daniel.35690',
-     'davebracco',
-     'ralf.kuschka',
-     'NERI GONZALEZ',
-     'Photonistan',
-     'marlazaro1',
-     'patricia fliedel',
-     'SilentInTheShade',
-     'iyk314159',
-     'Jake(731)',
-     'johnfranky_t',
-     'ainulislam',
-     'eawok',
-     'Ingunn Eriksen',
-     'The Photo Expert',
-     'tan.munmai',
-     'zzugu',
-     'najjarobinson',
-     'markjones bris',
-     'Ringo_C',
-     'mike.r.reiss',
-     'edmond gusar',
-     'Jason Witwicker',
-     'bobbykwibus',
-     'edrobson1970',
-     'YL168',
-     'Vibhutius',
-     'of GASS',
-     'd.vitali',
-     'Rafa.E',
-     'Bruno Magnum',
-     'Karol Kozak',
-     'Jahny',
-     'Zeroeight Fifthteen',
-     'B. Weihe Photography',
-     'schmiduwe89',
-     'remo.daut',
-     'stephardel16',
-     'Visible Landscape',
-     'The Phoenix Girl',
-     'Ginger H Robinson',
-     'adamdera',
-     'patricio.c',
-     'DaveMo2017',
-     'MarkUStein',
-     'gmmech',
-     'arijanamarinkovic',
-     'Kinsei TGS',
-     'marco_catullo',
-     'LukSusPhoto',
-     'nimitrastogi',
-     'winston.chou',
-     'Drew Kellar',
-     'Paul and Nalva',
-     'koczkodan',
-     'bobchesarek',
-     'jornvk',
-     'blyenbergh',
-     'corineouellet',
-     'periStatic',
-     'Stephen Huen',
-     'sirentale',
-     'Gamified_rover',
-     'marcostetter',
-     'alc.fotos',
-     'Luke Forrest',
-     'anmisz',
-     'DRogers07',
-     'P. Marione',
-     'Jochem.Herremans',
-     'dmetz photography-Creationsbyds',
-     'moni.asiri',
-     'sakarina_r',
-     'Bill E2011',
-     'fabio6510',
-     'camillocox',
-     'kristinamckay99',
-     'maruf1122345',
-     'tom.devoll',
-     'sphinx60',
-     'liss.cook',
-     'Jason_Hood',
-     'Sheldon Slusser',
-     'lenterojoproductions',
-     'katiegesseck',
-     'edutango',
-     'artistofunknown',
-     'hassamulhasan0',
-     'bgboybrad',
-     'patriciaanderson91',
-     'flamingo spiderman',
-     '@MicN',
-     'phillloyd558',
-     'jcjc100',
-     'gabicuff1',
-     'Tanjid Rahman Udoy',
-     'biasslover',
-     'hasanmehedy',
-     'fandino18',
-     'FlynnLovesPhotography',
-     'AverTiesPhotos',
-     'Open_Inside',
-     'wuppi.74',
-     'n80426',
-     'adonisadonis',
-     'cocoi_m',
-     'KarinWeinzierl',
-     'Garrett.Chapin Photography',
-     'christianvu1',
-     'smartie.matthew',
-     'NicholasAlp22',
-     'SherriKCT',
-     'ariellsimon',
-     'alwkiko',
-     'janvaljan1',
-     'BobbyFerkovich',
-     'mucahits',
-     'royluvsass',
-     'Pakistan Super League',
-     'abdurrahmanademolu1',
-     'alfatih1020',
-     'SOMBIR DHAKA',
-     'camaradu',
-     'fidel1620guandique1',
-     'Mich73b',
-     'Botolski1',
-     'Ezry A Rahman',
-     'decorace51',
-     'Deyed6o9',
-     'uzidoozy',
-     'richardstoby4',
-     'lucinda love',
-     '1968photo',
-     'Tuscany_Landscapes',
-     'etisdefo',
-     'Ciel Sam',
-     '233pazhannah',
-     'Mylene Gauthier',
-     'Ruby Tintur',
-     'Terrigal Australia',
-     'crazyeasyfatloss',
-     'meganysweet',
-     'exercise97',
-     'kristinaferraraphotography',
-     'Martinionice',
-     'marystraat',
-     'Reflexion!',
-     'gderifield2122',
-     'ELebro',
-     'Gabrielle Nikitin',
-     's.cotton929',
-     'L.HACKSPIEL',
-     'derek.tom24',
-     'Jonaskool',
-     'Atshirtaweek',
-     'Silence & Silhouette',
-     'Geminichic31',
-     'kantroemvisoth',
-     'jacquemart',
-     'shuddabrudda',
-     'valery_pokotylo',
-     'm.faraz87',
-     'hoffler_pictorials',
-     'photoholiic',
-     'wangdang591',
-     'mosheja',
-     'What is Art? - Please read my Profile!! -',
-     '@antonio urbano',];
-
-     // var test = [ "c++", "java", "php", "coldfusion", "javascript", "asp", "ruby" ];
+    var userPool = [
+    'chrisimmler',
+    'Alexander Lauterbach Photography',
+    'Ed Post',
+    'Stephen Hunt61',
+    'poludziber1',
+    'StephAnna :-)',];
 
   $( "#username1" ).autocomplete({
      source: userPool,
@@ -502,8 +189,6 @@
   });
  };
 
-$('#username1').on('change', autoComplete);
-$('#username2').on('change', autoComplete);
 
 
 // var userInputs = {

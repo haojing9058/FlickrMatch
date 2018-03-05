@@ -121,8 +121,10 @@ def display_partial_view():
     #below is for recommendation
     tags = word_count.get_tag_lst()
     text = word_count.get_text_lst()
+    result['tags'] = tags
+    result['text'] = text
     photo_ids = request_api.recommendation_by_text(tags, text)
-
+    result['photo_ids'] = photo_ids
     
     urls = []
     for photo_id in photo_ids:

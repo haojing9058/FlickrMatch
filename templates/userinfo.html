@@ -13,8 +13,16 @@
 </nav>
 <div class="container">
   <div class="row">
+    <h3> Best Nine on Flickr</h3>
+  </div>
+
+  <div class='row float-md-right'>
+    <a id="word-match" class="btn btn-outline-dark" role="button" href="/tags-bubble?username1={{ username1 }}&username2={{ username2 }}&name1={{ name1 }}&name2={{ name2 }}"> Word Match </a>
+  </div>
+
+  <div class="row">
     <div class="col-md-5">
-      <h2>{{ name1 }}</h2>
+      <h4>{{ name1 }}</h4>
       {% if urls1|length < 9 %}
         <p> Have at least nine photos on Flickr for this game! </p>
       {% else %}
@@ -53,7 +61,7 @@
     <div class="col-md-1"></div>
 
     <div class="col-md-5">
-      <h2>{{ name2 }}</h2>
+      <h4>{{ name2 }}</h4>
       {% if urls2|length < 9 %}
         <p> Have at least nine photos on Flickr for this game! </p>
       {% else %}
@@ -89,9 +97,6 @@
     {% endif %}
     </div>
   </div>
-  
-  <a id="word-match" class="button" href="/tags-bubble?username1={{ username1 }}&username2={{ username2 }}&name1={{ name1 }}&name2={{ name2 }}"> Word Match </a><br>
-  
 </div>
 
 {% endblock %}

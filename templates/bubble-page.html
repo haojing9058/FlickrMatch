@@ -2,45 +2,7 @@
 {% block content %}
 
 <style type="text/css">
-  /*dropdown style*/
-  .styled-select {
-   background: url(http://i62.tinypic.com/15xvbd5.png) no-repeat 96% 0;
-   height: 29px;
-   overflow: hidden;
-   width: 240px;
-  }
-
-  .styled-select select {
-   background: transparent;
-   border: none;
-   color: white;
-   font-size: 14px;
-   height: 29px;
-   padding: 5px; /* If you add too much padding here, the options won't show in IE */
-   width: 268px;
-  }
-
-  .styled-select.slate {
-     background: url(http://i62.tinypic.com/2e3ybe1.jpg) no-repeat right center;
-     height: 34px;
-     width: 240px;
-  }
-
-  .styled-select.slate select {
-     border: 1px solid #ccc;
-     font-size: 16px;
-     height: 34px;
-     width: 268px;
-  }
-
-  .green { background-color: #779126; }
-
-  .select-rounded {
-   -webkit-border-radius: 20px;
-   -moz-border-radius: 20px;
-   border-radius: 20px;
-  }
-
+ 
   text {
     font: 12px sans-serif;
 
@@ -63,8 +25,13 @@
     width: 200px;
   }
 
-  .svg{
+  .svg {
     background-color: #D9D9D9;
+  }
+
+  .recommendation-img {
+    padding-right: 0px; 
+    padding-left: 0px;
   }
 
 }
@@ -72,38 +39,48 @@
 
 <nav class="navbar navbar-light bg-faded ">
   <div class="container-fluid">
-      <a class="navbar-brand" href="#">FlickrMatch</a>
-      <a class="navbar-text navbar-right" href="#">Best Nine</a>
+      <a class="navbar-brand" href="/">FlickrMatch</a>
+      <a class="navbar-text navbar-right" href="/userinfo">Best Nine</a>
   </div>
 </nav>
 
-<div id='matchScore' 
+<div id='values' 
   data-username1='{{ username1 }}' 
   data-username2= '{{ username2 }}'
   data-name1 = '{{ name1 }}'
-  data-name2 = '{{ name2 }}' 
-  data-matchscore='{{ match_tags}}'>
+  data-name2 = '{{ name2 }}'> 
 </div>
 
 <div class='container'>
-
-  <div id='match'><h4>{{ name1 }} and {{ name2 }} is {{ match_tags }} match in photo tags</h4></div>
-
-  <div class="styled-select green select-rounded">
-    <select id='text-source'>
-      <option value='tags'>Photo Tags</option>
-      <option value='title'>Photo Title</option>
-      <option value='description'>Photo Description</option>
-    </select>
+  <div class='row'>
+   <div id='match'><h4>{{ name1 }} and {{ name2 }} is {{ match_tags }} match in photo tags</h4></div>
+  </div>
+  
+  <div class='row float-md-right'>
+    <a id="path-match" class="btn btn-outline-dark" role="button" href="/geo?username1={{ username1 }}&username2={{ username2 }}&name1={{ name1 }}&name2={{ name2 }}">Path Match</a>
   </div>
 
-  <div id='graph'></div>
-  
-  <button id='recommendation-button'> See Recommendation </button>
-  <div id='recommendation'></div>
-  <a href="geo?username1={{ username1 }}&username2={{ username2 }}&name1={{ name1 }}&name2={{ name2 }}"> Location </a>
-</div>
+  <!-- <div class="styled-select green select-rounded"> -->
+  <!-- </div> -->
+  <div class='row'>
+    <div id='graph'>
+      <div>
+        <select id='text-source'>
+          <option value='tags'>Photo Tags</option>
+          <option value='title'>Photo Title</option>
+          <option value='description'>Photo Description</option>
+        </select>
+      </div>
+    </div>
+  </div>
 
+  <div class='row justify-content-center'>
+    <button id='recommendation-button' type="button" class="btn btn-outline-dark" > See Recommendation </button>
+  </div>
+
+  <div class='row'>
+    <div id='recommendation'></div>
+  </div>
 
 <script src='https://cdnjs.cloudflare.com/ajax/libs/spin.js/2.0.1/spin.min.js'></script>
 
@@ -122,45 +99,54 @@
   };
 
   function updateGraph() {
-    var username1 = $('#matchScore').data('username1');
-    var username2 = $('#matchScore').data('username2');
-    var name1 = $('#matchScore').data('name1');
-    var name2 = $('#matchScore').data('name2');
+    var username1 = $('#values').data('username1');
+    var username2 = $('#values').data('username2');
+    var name1 = $('#values').data('name1');
+    var name2 = $('#values').data('name2');
 
     var url = '/tags-bubble';
     var selected = $('#text-source').val();
     
     var target = document.getElementById("graph");
-  var spinner = new Spinner(spinnerOpts).spin(target);
+    var spinner = new Spinner(spinnerOpts).spin(target);
 
     $.post(url, {'username1': username1,'username2': username2
       }, function(results){
-      var matchscore = results.match_description;
-      $('#match')
-        .html(`<h3>${name1} and ${name2} is ${matchscore} match in photo ${selected}</h3>`);
+
+        if ($('#text-source').val() == "tags") {
+          var matchscore = results.match_tags;
+        } else if ($('#text-source').val() == "title") {
+          var matchscore = results.match_title;
+        } else if ($('#text-source').val() == "description"){
+          var matchscore = results.match_description;
+        }
+
+      $('#match').html(`<h4>${name1} and ${name2} is ${matchscore} match in photo ${selected}</h4>`);
 
       d3.select("svg").remove();
       updateBubble(`static/${selected}.csv`);
-      
+
       // stop spinner when svg changes
       spinner.stop();
+      $('#recommendation-button').show();
     });
 
   }
-
+  $('#recommendation-button').hide();
   $('#text-source').on('change', updateGraph);
   
  function loadRecommendation(){
     url = '/tags-bubble';
-    username1 = $('#matchScore').data('username1');
-    username2 = $('#matchScore').data('username2');
+    username1 = $('#values').data('username1');
+    username2 = $('#values').data('username2');
     $.post(url, {'username1': username1, 'username2': username2},
       function(results){
+        console.log(results);
         var urls = results.urls;
         var text = "";
         var i;
         for(i = 0; i < urls.length; i++){
-          text += `<img src='${urls[i]}'></img>`;
+          text += `<img src='${urls[i]}' class="col-md-1 recommendation-img"></img>`;
         }
         $('#recommendation').html(text);
         $('#recommendation-button').hide();
