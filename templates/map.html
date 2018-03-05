@@ -5,7 +5,9 @@
   body {
      font-family: Arial, Helvetica, sans-serif;
   }
-
+  #graph {
+    padding-top: 28px;
+  }
   #states path {
     fill: #ccc;
     stroke: #fff;
@@ -24,21 +26,34 @@
       padding-left: .5rem !important;
     }
 
-  .recommendation-img {
-    padding-right: 0px; 
-    padding-left: 0px;
+
+    #recommendation {
+    margin-top: 5rem;
+    margin-bottom: 5rem;
   }
+
+    div.tooltip {
+    background-color: #626D71;
+    border-radius: 6px;
+    color: white;
+    font-family: monospace; 
+    position: absolute;
+    padding: 8px;
+    text-align: center;
+    width: 200px;
+  }
+
 </style>
 
 <nav class="navbar navbar-light bg-faded">
    <div class="container-fluid">
-      <a class="navbar-brand" href="/">FlickrMatch</a>
+      <a class="navbar-brand nav-brand" href="/">FlickrMatch</a>
       <ul class="navbar-nav ml-autl">
         <li class="nav-item">
-          <a class="nav-link" href="javascript:window.history.go(-2);">Best Nine</a>
+          <a class="nav-link nav-brand" href="javascript:window.history.go(-2);">Best Nine</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="javascript:window.history.back();">Word Match</a>
+          <a class="nav-link nav-brand" href="javascript:window.history.back();">Word Match</a>
         </li>
       </ul>   
     </div>
@@ -50,7 +65,7 @@
 </div>
 
 <div class='container'>
-  <div class='row'>
+  <div class='row page-title'>
    <div id='match'><h4><span id='name1' style="color: #4484CE">{{ name1 }} </span>and <span id='name2' style="color: #F9CF00" >{{ name2 }}</span>'s photo path</h4></div>
   </div>
 
@@ -69,8 +84,8 @@
     <div id="graph"></div>
   </div>
 
-  <div class='row justify-content-center'>
-    <button id='recommendation-button' type="button" class="btn btn-outline-dark" > Recommendation </button>
+  <div class='row justify-content-center recommendation-row'>
+    <a id='recommendation-button' type="button" class="btn btn-outline-dark" href="#recommendation" > Recommendation </a>
   </div>
 
   <div class="row">
@@ -88,7 +103,7 @@ loadMap("static/geo.csv");
 function loadRecommendation(results){
   // var results = response;
   var urls = results.urls;
-  console.log(urls);
+  console.log(results);
   var text = "";
   var i;
   for(i = 0; i < urls.length; i++){
@@ -112,10 +127,10 @@ $(document).ready(function(){
 
 function loadMap(dataFilePath){
 
-  var w = 1140;
-  var h = 500;
+  var w = 1200;
+  var h = 550;
   var xy = d3.geo.equirectangular()
-          .scale(140);
+          .scale(170);
   var path = d3.geo.path()
           .projection(xy);
   var color1 = "#4484CE";
@@ -167,6 +182,10 @@ function loadMap(dataFilePath){
 
   d3.csv(dataFilePath, function(data) {
 
+     // var div = d3.select("#graph").append("div") 
+     //    .attr("class", "tooltip")       
+     //    .style("opacity", 0);
+
     circles.selectAll("circle")
     .data(data)
     .enter()
@@ -181,19 +200,67 @@ function loadMap(dataFilePath){
       if (d["user"] === user2) {return color2};
       })
     .on("mouseover", function(d, i) {
-        // d3.select(this).style("fill","#FC0");
+        d3.select(this).style("opacity",1);
+        circles.append("rect")
+          .style("fill", "colorCommon")
+
         circles.append("text")
             .attr("id", "t"  + "-" + i)
             .attr("x", function() { return xy([+d["longitude"],+d["latitude"]])[0]; })
             .attr("y", function() { return xy([+d["longitude"],+d["latitude"]])[1]; })
-            .text(function() { return d["country_name"] + ": " + Number(d[document.getElementById("year").value]); });
+            .text(function() { return d["user"] + " @ " + d["country_name"] + ": " + Number(d[document.getElementById("year").value]) + " photos"; })
+        
+      //   var y = d3.scale.linear()
+      //     .domain([0,10+1])
+      //     .range([0,h]);
+
+      //   var texts = d3.range(10).map(function(d,i) {
+      //       return { x: w/2, y: y(i+1)}
+      //   });
+
+
+      //   svg.selectAll("text").each(function(d, i) {
+      //   texts[i].bb = this.getBBox(); // get bounding box of text field and store it in texts array
+      //   });
+
+      //   var paddingLeftRight = 18; // adjust the padding values depending on font and font size
+      //   var paddingTopBottom = 5;
+
+      //   svg.selectAll("rect")
+      //   .attr("x", function(d) { return d.x - d.bb.w/2 - paddingLeftRight/2; })
+      //   .attr("y", function(d) { return d.y - d.bb.h + paddingTopBottom/2;  })
+      //   .attr("width", function(d) { return d.bb.w + paddingLeftRight; })
+      //   .attr("height", function(d) { return d.bb.h + paddingTopBottom; });
       })
+
+
     .on("mouseout", function(d, i) {
         // d3.select(this).style("fill","steelblue");
         d3.select("#t"  + "-" + i).remove();
       })
 
   });
+
+
+      // .on("mouseover", function(d) {     
+      //   div.transition()   
+      //     .duration(100)
+      //     .attr("x", function() { return xy([+d["longitude"],+d["latitude"]])[0]; })
+      //     .attr("y", function() { return xy([+d["longitude"],+d["latitude"]])[1]; })
+      //     .style("opacity", 1);
+            
+      //   div.html(d.country_name);                         
+      //     })
+      // .on("mousemove", function() {
+      //     div.style("top", (d3.event.pageY - 10) + "px")
+      //       .style("left", (d3.event.pageX + 10) + "px");
+      //   })      
+      // .on("mouseout", function() {   
+      //     div.transition()   
+      //       .duration(100)    
+      //       .style("opacity", 0);
+      //   });
+
 
 
   function redraw(year) {

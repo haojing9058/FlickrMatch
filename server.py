@@ -168,6 +168,7 @@ def display_recommendation_geo():
     # result['geo_lst'] = geo_lst
     # result['photo_ids'] = photo_ids
     result['urls'] = urls
+    result['geo_lst'] = geo_lst
 
     return jsonify(result)
 
