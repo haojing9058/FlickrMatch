@@ -184,9 +184,9 @@ function loadMap(dataFilePath){
 
   d3.csv(dataFilePath, function(data) {
 
-     // var div = d3.select("#graph").append("div") 
-     //    .attr("class", "tooltip")       
-     //    .style("opacity", 0);
+     var div = d3.select("#graph").append("div") 
+        .attr("class", "tooltip")       
+        .style("opacity", 0);
 
     circles.selectAll("circle")
     .data(data)
@@ -201,68 +201,30 @@ function loadMap(dataFilePath){
       if (d["user"] === user1) {return color1};
       if (d["user"] === user2) {return color2};
       })
-    .on("mouseover", function(d, i) {
-        d3.select(this).style("opacity",1);
-        circles.append("rect")
-          .style("fill", "colorCommon")
-
-        circles.append("text")
-            .attr("id", "t"  + "-" + i)
-            .attr("x", function() { return xy([+d["longitude"],+d["latitude"]])[0]; })
-            .attr("y", function() { return xy([+d["longitude"],+d["latitude"]])[1]; })
-            .text(function() { return d["user"] + " @ " + d["country_name"] + ": " + Number(d[document.getElementById("year").value]) + " photos"; })
-        
-      //   var y = d3.scale.linear()
-      //     .domain([0,10+1])
-      //     .range([0,h]);
-
-      //   var texts = d3.range(10).map(function(d,i) {
-      //       return { x: w/2, y: y(i+1)}
-      //   });
-
-
-      //   svg.selectAll("text").each(function(d, i) {
-      //   texts[i].bb = this.getBBox(); // get bounding box of text field and store it in texts array
-      //   });
-
-      //   var paddingLeftRight = 18; // adjust the padding values depending on font and font size
-      //   var paddingTopBottom = 5;
-
-      //   svg.selectAll("rect")
-      //   .attr("x", function(d) { return d.x - d.bb.w/2 - paddingLeftRight/2; })
-      //   .attr("y", function(d) { return d.y - d.bb.h + paddingTopBottom/2;  })
-      //   .attr("width", function(d) { return d.bb.w + paddingLeftRight; })
-      //   .attr("height", function(d) { return d.bb.h + paddingTopBottom; });
+    .on("mouseover", function(d) {     
+        div.transition()   
+          .duration(100)
+          .attr("x", function() { return xy([+d["longitude"],+d["latitude"]])[0]; })
+          .attr("y", function() { return xy([+d["longitude"],+d["latitude"]])[1]; })
+          .style("opacity", 1);
+            
+        div.html(d["user"] + "<br>" + d["country_name"] + "<br>" + Number(d[document.getElementById("year").value]) + " photos");
       })
 
-
-    .on("mouseout", function(d, i) {
-        // d3.select(this).style("fill","steelblue");
-        d3.select("#t"  + "-" + i).remove();
-      })
-
+    .on("mousemove", function() {
+          div.style("top", (d3.event.pageY - 10) + "px")
+            .style("left", (d3.event.pageX + 10) + "px");
+        })      
+    
+    .on("mouseout", function() {   
+          div.transition()   
+            .duration(100)    
+            .style("opacity", 0);
+      });
   });
 
 
-      // .on("mouseover", function(d) {     
-      //   div.transition()   
-      //     .duration(100)
-      //     .attr("x", function() { return xy([+d["longitude"],+d["latitude"]])[0]; })
-      //     .attr("y", function() { return xy([+d["longitude"],+d["latitude"]])[1]; })
-      //     .style("opacity", 1);
-            
-      //   div.html(d.country_name);                         
-      //     })
-      // .on("mousemove", function() {
-      //     div.style("top", (d3.event.pageY - 10) + "px")
-      //       .style("left", (d3.event.pageX + 10) + "px");
-      //   })      
-      // .on("mouseout", function() {   
-      //     div.transition()   
-      //       .duration(100)    
-      //       .style("opacity", 0);
-      //   });
-
+      
 
 
   function redraw(year) {

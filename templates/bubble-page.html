@@ -29,12 +29,14 @@
     background-color: #D9D9D9;
   }*/
   #recommendation {
-    margin-top: 5rem;
+    margin-top: 0rem;
     margin-bottom: 5rem;
+    display: none;
   }
 
-  .recommendation-row{
-    padding-top: 10px;
+  #recommendation-text{
+    display: none;
+    padding-top: 1px;
   }
 
   .container-background {
@@ -44,8 +46,27 @@
     background-repeat: no-repeat; 
     /*height: 1000px;*/
     /*background-color: rgba(0, 0, 0, 0.2);*/
-}
+  }
 
+  .recommendation-img {
+    animation-duration: 2.5s;
+    animation-name: bottomUp;
+    animation-iteration-count: 1;
+  }
+
+  @keyframes bottomUp {
+    from {
+      margin-bottom: 100%;
+    }
+
+    to {
+      margin-bottom: 0%;
+    }
+  }
+
+  .showRecommendation {
+    display: block !important;
+  }
 
 }
 </style>
@@ -69,15 +90,13 @@
 <div class='container container-background'>
   <div class='row page-title'>
     <div id='match'>
-      <h4>{{ name1 }} and {{ name2 }} is {{ match_tags }} match in photo tags</h4>
+      <h4><span style="color: #4484CE">{{ name1 }}</span> and <span style="color:#F9CF00">{{ name2 }}</span> is <span style="color:#F19F4D">{{ match_tags }} match </span>in photo tags</h4>
     </div>
     <div class='action-button'>
       <a id="path-match" class="btn btn-outline-dark" role="button" href="/geo?username1={{ username1 }}&username2={{ username2 }}&name1={{ name1 }}&name2={{ name2 }}">Path Match</a>
     </div>
   </div>
   
-
-
   <!-- <div class="styled-select green select-rounded"> -->
   <!-- </div> -->
   <div class='row'>
@@ -92,8 +111,15 @@
     </div>
   </div>
 
-  <div class='row justify-content-center recommendation-row'>
+<!--   <div class='row justify-content-center recommendation-row'>
     <a id='recommendation-button' type="button" class="btn btn-outline-dark" href="#recommendation"> Recommendation </a>
+  </div> -->
+  <button type="button" class="btn btn-default" aria-label="Left Align">
+    <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
+  </button>
+
+  <div class='row justify-content-center'>
+    <h4 id="recommendation-text">Recommendation</h4>
   </div>
 
   <div class='row'>
@@ -127,8 +153,7 @@
     var selected = $('#text-source').val();
     
     var target = document.getElementById("graph");
-    var spinner = new Spinner(spinnerOpts).spin(target);
-
+    var spinner = new Spinner(spinnerOpts).spin(target);    
     $.post(url, {'username1': username1,'username2': username2
       }, function(results){
 
@@ -147,12 +172,10 @@
 
       // stop spinner when svg changes
       spinner.stop();
-      $('#recommendation-button').show();
+      $('#recommendation-text').show();
     });
 
   }
-  $('#recommendation-button').hide();
-  $('#text-source').on('change', updateGraph);
   
  function loadRecommendation(){
     url = '/tags-bubble';
@@ -171,13 +194,8 @@
       });
   }
 
-  $(document).ready(function(){
-    $('#recommendation-button').click(function() {
-      loadRecommendation();
-    });
-  })
 
-    // D3 global variables
+  // D3 global variables
   var width = 1140,
       height = 550,
       padding = 0, // separation between same-color nodes
@@ -366,7 +384,18 @@
       }
     });
   }
-  updateGraph(); 
+
+  $(document).scroll(function(){
+    if ($(this).scrollTop() > 30) {
+      $('#recommendation').addClass('showRecommendation');
+    }
+  });
+
+  $('#recommendation-text').hide();
+  $('#text-source').on('change', updateGraph);
+  // updateGraph();
+  updateBubble("static/tags.csv");
+  loadRecommendation();
 
   Array.prototype.contains = function(v) {
     for(var i = 0; i < this.length; i++) {
