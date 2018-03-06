@@ -165,6 +165,7 @@ def display_recommendation_geo():
         for photo_id in photo_ids:
             urls.append(db.session.query(Photo.url).filter(Photo.photo_id == photo_id).first())
 
+
     # result['geo_lst'] = geo_lst
     # result['photo_ids'] = photo_ids
     result['urls'] = urls

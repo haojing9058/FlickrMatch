@@ -36,10 +36,6 @@
   .recommendation-row{
     padding-top: 10px;
   }
-  .recommendation-img {
-    padding-right: 0px; 
-    padding-left: 0px;
-  }
 
   .container-background {
     background-size:cover;
@@ -97,7 +93,7 @@
   </div>
 
   <div class='row justify-content-center recommendation-row'>
-    <a id='recommendation-button' type="button" class="btn btn-outline-dark" href="#recommendation"> See Recommendation </a>
+    <a id='recommendation-button' type="button" class="btn btn-outline-dark" href="#recommendation"> Recommendation </a>
   </div>
 
   <div class='row'>
@@ -144,7 +140,7 @@
           var matchscore = results.match_description;
         }
 
-      $('#match').html(`<h4><span style="color: #4484CE">${name1}</span> and <span style="color:#F9CF00">${name2}</span> is ${matchscore} <span style="color:#F19F4D">match</span> in photo ${selected}</h4>`);
+      $('#match').html(`<h4><span style="color: #4484CE">${name1}</span> and <span style="color:#F9CF00">${name2}</span> is<span style="color:#F19F4D"> ${matchscore} match</span> in photo ${selected}</h4>`);
 
       d3.select("svg").remove();
       updateBubble(`static/${selected}.csv`);
