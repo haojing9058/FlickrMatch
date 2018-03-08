@@ -20,7 +20,7 @@ Once the user clicks “match”, the app will call Flickr API to get users’ p
 Users can see word match bubble graphs that show the frequency of users’ words used in their photo tags, title, and description, and the match score accordingly. The visualization is implemented by D3. In the back end, I use Python’s pandas and nltk to process the text data so that only the meaningful words are counted and sorted. Based on the most frequently used photo tags and words in common, the app calls Flickr API to get photo recommendation. 
 ### Path Match and Recommendation
 Users can also see a path match - the users’ photo counts based on geological information and timeline. Given the latitude and longitude of a photo, the app uses Python reverse-geocoder to get the country code, and then combines Google Map countries_code.csv and structures the data using pandas. It gives each user’s photo counts in each country of each year. The recommendation is based on the countries that both users have been to, otherwise it will give the top visited countries of each user.
-# Run FlickrMatch on your machine
+## Run FlickrMatch on your machine
 Clone or fork this repo:
 ```sh
 git clone https://github.com/haojing9058/FlickrMatch.git
