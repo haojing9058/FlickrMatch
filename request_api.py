@@ -56,7 +56,7 @@ def seed_photos_by_userid(user_id, sort='interesting', per_page=100):
     params['user_id'] = user_id
     params['sort'] = 'interesting'
     params['extras'] =','.join(['description','date_taken', 'owner_name', 'geo', 
-        'tags', 'url_sq'])
+        'tags', 'url_q'])
     params['per_page'] = per_page
     response = requests.get(API_URL, params=params).json()
     photos = response['photos']['photo']
@@ -70,11 +70,14 @@ def seed_photos_by_userid(user_id, sort='interesting', per_page=100):
             description = p['description']['_content'].encode('utf-8')
             tags = p['tags'].encode('utf-8')
             title = p['title'].encode('utf-8')
-            url = p['url_sq'].encode('utf-8')
+            url = p['url_q'].encode('utf-8')
             date_taken = p['datetaken'].encode('utf-8')
             lat = p['latitude']
             lon = p['longitude']
-            country_code = rg.search((lat, lon))[0]['cc']
+            if lat == 0 and lon == 0:
+                country_code = None
+            else:
+                country_code = rg.search((lat, lon))[0]['cc']
             # if p.get('place_id'):
             #     place_id = p['place_id'].encode('utf-8')
             # else:
@@ -108,7 +111,7 @@ def recommendation_by_text(tags, text, per_page=36):
     # params['machine_tags_mode']
     params['media'] = 'photos'
     params['extras'] =','.join(['description','date_taken', 'owner_name', 'geo', 
-        'tags', 'url_sq'])
+        'tags', 'url_q'])
     params['per_page'] = per_page
     response = requests.get(API_URL, params=params).json()
 
@@ -128,11 +131,14 @@ def recommendation_by_text(tags, text, per_page=36):
             description = p['description']['_content'].encode('utf-8')
             tags = p['tags'].encode('utf-8')
             title = p['title'].encode('utf-8')
-            url = p['url_sq'].encode('utf-8')
+            url = p['url_q'].encode('utf-8')
             date_taken = p['datetaken'].encode('utf-8')
             lat = p['latitude']
             lon = p['longitude']
-            country_code = rg.search((lat, lon))[0]['cc']
+            if lat == 0 and lon == 0:
+                country_code = None
+            else:
+                country_code = rg.search((lat, lon))[0]['cc']
 
             photo = Photo(photo_id=photo_id, user_id=user_id, username=username,
             description=description, tags=tags, title=title, url=url, 
@@ -163,7 +169,7 @@ def recommendation_by_geo(lat, lon, per_page=36):
     # params['machine_tags']
     # params['machine_tags_mode']
     params['extras'] =','.join(['description','date_taken', 'owner_name', 'geo', 
-        'tags', 'url_sq'])
+        'tags', 'url_q'])
     params['per_page'] = per_page
     response = requests.get(API_URL, params=params).json()
 
@@ -183,11 +189,14 @@ def recommendation_by_geo(lat, lon, per_page=36):
             description = p['description']['_content'].encode('utf-8')
             tags = p['tags'].encode('utf-8')
             title = p['title'].encode('utf-8')
-            url = p['url_sq'].encode('utf-8')
+            url = p['url_q'].encode('utf-8')
             date_taken = p['datetaken'].encode('utf-8')
             lat = p['latitude']
             lon = p['longitude']
-            country_code = rg.search((lat, lon))[0]['cc']
+            if lat == 0 and lon == 0:
+                country_code = None
+            else:
+                country_code = rg.search((lat, lon))[0]['cc']
 
             photo = Photo(photo_id=photo_id, user_id=user_id, username=username,
             description=description, tags=tags, title=title, url=url, 

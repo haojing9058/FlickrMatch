@@ -8,8 +8,8 @@ from collections import Counter
 from model import User, Photo
 from model import connect_to_db, db
 
-UNWANTED_WORDS = set(stopwords.words('english')).union(set(['facebook', 'instagram', 'thanks', 'follow', 'share',
-            'please', 'page', 'visit', 'thanks', 'feel', 'like', 'ig', 'image', 'also']))
+UNWANTED_WORDS = set(stopwords.words('english')).union(set(['facebook', 'instagram', 'thanks', 'follow', 'share', 'a7rm2',
+            'please', 'page', 'visit', 'thanks', 'feel', 'like', 'ig', 'image', 'also', 'I', 'l', 'na', 'ba', 'ive', 'b', 'bplease', 'quotfquot', 'hessen', 'loch']))
 
 def strip_punctuation (str):
     if not str:

@@ -2,10 +2,9 @@
 {% block content %}
 
 <style type="text/css">
- 
-  text {
-    font: 12px sans-serif;
 
+  text {
+    font: 12px Lato;
   }
 
   circle {
@@ -18,7 +17,7 @@
     background-color: #626D71;
     border-radius: 6px;
     color: white;
-    font-family: monospace; 
+    font-family: Lato; 
     position: absolute;
     padding: 8px;
     text-align: center;
@@ -28,16 +27,6 @@
 /*  .svg {
     background-color: #D9D9D9;
   }*/
-  #recommendation {
-    margin-top: 0rem;
-    margin-bottom: 5rem;
-    display: none;
-  }
-
-  #recommendation-text{
-    display: none;
-    padding-top: 1px;
-  }
 
   .container-background {
     background-size:cover;
@@ -48,36 +37,16 @@
     /*background-color: rgba(0, 0, 0, 0.2);*/
   }
 
-  .recommendation-img {
-    animation-duration: 2.5s;
-    animation-name: bottomUp;
-    animation-iteration-count: 1;
+  .recommendation-text {
+    display:none;
+    padding-top: 3rem;
   }
-
-  @keyframes bottomUp {
-    from {
-      margin-bottom: 100%;
-    }
-
-    to {
-      margin-bottom: 0%;
-    }
-  }
-
-  .showRecommendation {
-    display: block !important;
-  }
-
-}
-</style>
-
-<style type="text/css">
 
 </style>
 
 <nav class="navbar navbar-light bg-faded ">
   <a class="navbar-brand nav-brand" href="/">FlickrMatch</a>
-  <a class="navbar-text navbar-right nav-brand" href="javascript:window.history.back();">Best Nine</a>
+  <a class="navbar-text navbar-right nav-menu" href="javascript:window.history.back();">Best Nine</a>
 </nav>
 
 <div id='values' 
@@ -90,10 +59,10 @@
 <div class='container container-background'>
   <div class='row page-title'>
     <div id='match'>
-      <h4><span style="color: #4484CE">{{ name1 }}</span> and <span style="color:#F9CF00">{{ name2 }}</span> is <span style="color:#F19F4D">{{ match_tags }} match </span>in photo tags</h4>
+      <h4 class="title-font"><span style="color: #4484CE">{{ name1 }}</span> and <span style="color:#F9CF00">{{ name2 }}</span> are <span style="color:#F19F4D">{{ match_tags }} MATCHED </span>in photo tags</h4>
     </div>
     <div class='action-button'>
-      <a id="path-match" class="btn btn-outline-dark" role="button" href="/geo?username1={{ username1 }}&username2={{ username2 }}&name1={{ name1 }}&name2={{ name2 }}">Path Match</a>
+      <a id="path-match" class="btn btn-outline btn:hover" role="button" href="/geo?username1={{ username1 }}&username2={{ username2 }}&name1={{ name1 }}&name2={{ name2 }}">Path Match</a>
     </div>
   </div>
   
@@ -111,15 +80,8 @@
     </div>
   </div>
 
-<!--   <div class='row justify-content-center recommendation-row'>
-    <a id='recommendation-button' type="button" class="btn btn-outline-dark" href="#recommendation"> Recommendation </a>
-  </div> -->
-  <button type="button" class="btn btn-default" aria-label="Left Align">
-    <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
-  </button>
-
   <div class='row justify-content-center'>
-    <h4 id="recommendation-text">Recommendation</h4>
+    <h4 id="recommendation-text" class="recommendation-text-font">You May Also Like</h4>
   </div>
 
   <div class='row'>
@@ -130,6 +92,23 @@
 <script src='https://cdnjs.cloudflare.com/ajax/libs/spin.js/2.0.1/spin.min.js'></script>
 
 <script>
+
+  // D3 global variables
+  var width = 1140,
+      height = 550,
+      padding = 0, // separation between same-color nodes
+      clusterPadding = 0, // separation between different-color nodes
+      maxRadius = 20;
+
+  var color = d3.scale.ordinal()
+        .range([ '#4484CE', "#F9CF00", '#F19F4D']);
+        // .range(["#6EC4DB", "FEDC3D", "#FEA680"]);
+        // .range(["93C178", "#465C8B", "F7EF6A"]);
+
+  var opacity = d3.scale.ordinal()
+        // .range([1,1,1])
+        .range([0.8, 0.8, 0.8])
+
   // http://spin.js.org/ loader settings
   var spinnerOpts = {
     lines: 9, // The number of lines to draw
@@ -165,7 +144,7 @@
           var matchscore = results.match_description;
         }
 
-      $('#match').html(`<h4><span style="color: #4484CE">${name1}</span> and <span style="color:#F9CF00">${name2}</span> is<span style="color:#F19F4D"> ${matchscore} match</span> in photo ${selected}</h4>`);
+      $('#match').html(`<h4 class="title-font"><span style="color: #4484CE">${name1}</span> and <span style="color:#F9CF00">${name2}</span> are<span style="color:#F19F4D"> ${matchscore} MATCHED</span> in Photo ${selected}</h4>`);
 
       d3.select("svg").remove();
       updateBubble(`static/${selected}.csv`);
@@ -193,23 +172,6 @@
         $('#recommendation').html(text);
       });
   }
-
-
-  // D3 global variables
-  var width = 1140,
-      height = 550,
-      padding = 0, // separation between same-color nodes
-      clusterPadding = 0, // separation between different-color nodes
-      maxRadius = 20;
-
-  var color = d3.scale.ordinal()
-        .range([ '#4484CE', "#F9CF00", '#F19F4D']);
-        // .range(["#6EC4DB", "FEDC3D", "#FEA680"]);
-        // .range(["93C178", "#465C8B", "F7EF6A"]);
-
-  var opacity = d3.scale.ordinal()
-        // .range([1,1,1])
-        .range([0.8, 0.8, 0.8])
 
   //D3 function that display given textUrl
   function updateBubble(dataFilePath) {
@@ -252,12 +214,6 @@
       var svg = d3.select("#graph").append("svg")
           .attr("width", width)
           .attr("height", height);
-
-      //   svg.append("rect")
-      // .attr("width", "100%")
-      // .attr("height", "100%")
-      // .attr("fill", "#D9D9D9")
-      // .style("opacity", 0.4);
 
       var div = d3.select("#graph").append("div") 
         .attr("class", "tooltip")       
@@ -393,8 +349,9 @@
 
   $('#recommendation-text').hide();
   $('#text-source').on('change', updateGraph);
-  // updateGraph();
+
   updateBubble("static/tags.csv");
+
   loadRecommendation();
 
   Array.prototype.contains = function(v) {

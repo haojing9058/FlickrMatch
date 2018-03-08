@@ -2,28 +2,32 @@
 {% block content%}
 <style type="text/css">
     .container-fluid {
-    padding-top: 140px;
-    background-size:cover;
-    background-image:url("static/pexels-photo-571169.jpeg"); 
-    background-position: center;
-    background-repeat: no-repeat; 
-    height: 800px;
-}
+      padding-top: 140px;
+      background-size:cover;
+      background-image:url("static/pexels-photo-571169.jpeg"); 
+      background-position: center;
+      background-repeat: no-repeat; 
+      height: 800px;
+    }
+
     .subtitle {
       padding-bottom: 15px;
-      font-family: "Montserrat";
-      font-style: italic;
+      font-family: Lato;
       font-weight: bold;
       font-size: 1.5rem;
-      color: #4d4d4d;
+      color: #4d4d4d;    
     }
 
     .maintitle{
       margin-left: 25px;
-      font-family: "Montserrat";
+      font-family: Shadows Into Light Two;
       font-weight: bold;
       font-size: 3rem;
       color: #4d4d4d;
+    }
+
+    .entry-box {
+      margin-left: -45px;
     }
 
     #check{
@@ -32,6 +36,10 @@
 
     #users{
       margin-left: 100px;
+    }
+
+    .btn:hover {
+      background-color: #B56357;
     }
 /*
     .h1 .main-title{
@@ -59,7 +67,7 @@
     <h5 class="subtitle">Simply by paring Flickr usernames.</h5>
   </div>
   <form id="users" action="/userinfo" method="POST">
-    <div class="form-group row justify-content-center">
+    <div class="form-group row justify-content-center entry-box">
       <!-- <label for="name1" class="col-md-1 col-form-label"> Player 1 </label> -->
 
       <div class="col-md-3 ui-widget">
@@ -76,7 +84,7 @@
       </div>
     </div>
 
-    <div class="form-group row justify-content-center">
+    <div class="form-group row justify-content-center entry-box">
       <!-- <label for="name2" class="col-md-1 col-form-label"> Player 2 </label> -->
 
       <div class="col-md-3 ui-widget">
@@ -94,7 +102,7 @@
     </div>
 
     <div class="row justify-content-center my-4">
-      <button type="submit" id="check" class="btn btn-outline-dark btn-lg">Match</button>
+      <button type="submit" id="check" class="btn btn-outline-dark btn-lg btn:hover">Match</button>
     </div>
   </form>
 </div>
@@ -187,7 +195,6 @@
  'Ezry A Rahman',
  'Fede Duran',
  'Fencejo',
- 'Fernando Oliveira (Fotografias)',
  'FlynnLovesPhotography',
  'Franklin Photographyau',
  'Funny Cyclist',
@@ -216,6 +223,7 @@
  'KarinWeinzierl',
  'Karol Kozak',
  'KelmiRogue',
+ 'kenny barker',
  'Kevin Drury',
  'Kinsei TGS',
  'Kit Sidlow',
@@ -270,7 +278,6 @@
  'Rorroemotion',
  'Ruby Tintur',
  'Rudi Verspoor',
- 'S l a w e k',
  'SANDRA CREATIONS',
  'SOMBIR DHAKA',
  'Saan Martins',

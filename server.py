@@ -158,10 +158,10 @@ def display_recommendation_geo():
 
     urls = []
     for lat, lon in geo_lst:
-        if len(geo_lst) == 2:
-            photo_ids = request_api.recommendation_by_geo(lat, lon, per_page=18)
-        else:
-            photo_ids = request_api.recommendation_by_geo(lat, lon, per_page=36)
+        # if len(geo_lst) == 2:
+        #     photo_ids = request_api.recommendation_by_geo(lat, lon, per_page=18)
+        # else:
+        photo_ids = request_api.recommendation_by_geo(lat, lon, per_page=37)
         for photo_id in photo_ids:
             urls.append(db.session.query(Photo.url).filter(Photo.photo_id == photo_id).first())
 
@@ -177,14 +177,14 @@ def display_recommendation_geo():
 if __name__ == "__main__":
     # We have to set debug=True here, since it has to be True at the
     # point that we invoke the DebugToolbarExtension
-    app.debug = True
+    # app.debug = True
     # make sure templates, etc. are not cached in debug mode
     app.jinja_env.auto_reload = app.debug
 
     connect_to_db(app)
 
     # Use the DebugToolbar
-    DebugToolbarExtension(app)
+    # DebugToolbarExtension(app)
 
     app.run(port=5000, host='0.0.0.0')
 

@@ -2,12 +2,16 @@
 {% block content %}
 
 <style type="text/css">
+
   body {
-     font-family: Arial, Helvetica, sans-serif;
+     font-family: Lato;
   }
+
   #graph {
-    padding-top: 28px;
+    padding-top: 0;
+    margin-left: 30px;
   }
+
   #states path {
     fill: #ccc;
     stroke: #fff;
@@ -21,18 +25,45 @@
       flex-direction: row;
     }
     
-    .nav-link {
-      padding-right: .5rem !important;
-      padding-left: .5rem !important;
-    }
-
-
-    #recommendation {
-    margin-top: 5rem;
-    margin-bottom: 5rem;
+  .nav-link {
+    padding-right: .5rem !important;
+    padding-left: .5rem !important;
   }
 
-    div.tooltip {
+  .title-font {
+    font-family: Nunito;
+    font-weight: bold;
+    color: #4d4d4d;
+    font-size: 2rem;
+  }
+
+  #year-label {
+    color: black;
+    font-family: Lato;
+    font-weight: bold;
+    font-size: 1.2rem;
+  }
+
+  #year {
+    border: 0;
+    width: 50px;
+    font-family: Lato;
+    font-size: 1.2rem;
+    color: #F19F4D;
+    font-weight: bold;
+  }
+
+  .slider-box {
+    margin-left: -70px;
+    margin-top: 8px;
+  }
+
+  .recommendation-text {
+    display:none;
+    padding-top: 1rem;
+  }
+
+  div.tooltip {
     background-color: #626D71;
     border-radius: 6px;
     color: white;
@@ -50,10 +81,10 @@
       <a class="navbar-brand nav-brand" href="/">FlickrMatch</a>
       <ul class="navbar-nav ml-autl">
         <li class="nav-item">
-          <a class="nav-link nav-brand" href="javascript:window.history.go(-2);">Best Nine</a>
+          <a class="navbar-text nav-link navbar-right nav-menu" href="javascript:window.history.back();">Word Match</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link nav-brand" href="javascript:window.history.back();">Word Match</a>
+          <a class="navbar-text nav-link navbar-right nav-menu" href="javascript:window.history.go(-2);"> Best Nine</a>
         </li>
       </ul>   
     </div>
@@ -67,27 +98,29 @@
 <div class='container'>
   <div class='row page-title'>
    <div id='match'>
-    <h4><span id='name1' style="color: #4484CE">{{ name1 }} </span>and <span id='name2' style="color: #F9CF00" >{{ name2 }}</span>'s photo path</h4>
+    <h4 class="title-font"><span id='name1' style="color: #4484CE">{{ name1 }} </span>and <span id='name2' style="color: #F9CF00" >{{ name2 }}</span>'s photo path</h4>
     </div>
   </div>
 
   <div class='row'>
+  <div class='col-md-2'>
     <p style="margin-bottom: 0;">
-      <label for="year">Year :</label>
+      <label id="year-label" for="year">Year :</label>
       <input type="text" id="year" style="border:0; width: 50px;"/>
     </p>
   </div>
 
-  <div class="row">
+  <div class="col-md-3 slider-box">
     <div id="slider" style="width: 200px;"></div>
+  </div>
   </div>
 
   <div class="row">
     <div id="graph"></div>
   </div>
 
-  <div class='row justify-content-center recommendation-row'>
-    <a id='recommendation-button' type="button" class="btn btn-outline-dark" href="#recommendation" > Recommendation </a>
+  <div class='row justify-content-center'>
+    <h4 id="recommendation-text" class="recommendation-text-font">You May Also Like</h4>
   </div>
 
   <div class="row">
@@ -96,43 +129,42 @@
 </div>
 
 <script src="https://code.jquery.com/ui/1.10.4/jquery-ui.min.js"></script>
-<link rel="stylesheet" type="text/css" href="https://code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css" />
+<link rel="stylesheet" type="text/css" href="https://code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css"/>
 
 <script type="text/javascript">
 
 loadMap("static/geo.csv");
 
 function loadRecommendation(results){
-  // var results = response;
   var urls = results.urls;
   console.log(results);
   var text = "";
   var i;
   for(i = 0; i < urls.length; i++){
-    // text += "<img id=img" + i.toString() +  " src='" + urls[i] + "' </img>";
     text += `<img src='${urls[i]}' class="col-md-1 recommendation-img"></img>`;
   }
   $('#recommendation').html(text);
-  $('button').hide();
 }
 
 function getRecommendation() {
   $.get('/recommendation-geo', loadRecommendation);
 }
 
-$(document).ready(function(){
-    $('#recommendation-button').click(function(){
-      getRecommendation();
-    });
-  })
+$(document).scroll(function(){
+    // if ($(this).scrollTop() > 0) {
+      $('#recommendation').addClass('showRecommendation');
+    // }
+  });
 
+// $('#recommendation-text').hide();
+
+getRecommendation();
 
 function loadMap(dataFilePath){
-
   var w = 1200;
-  var h = 550;
+  var h = 450;
   var xy = d3.geo.equirectangular()
-          .scale(170);
+          .scale(150);
   var path = d3.geo.path()
           .projection(xy);
   var color1 = "#4484CE";
@@ -223,10 +255,6 @@ function loadMap(dataFilePath){
       });
   });
 
-
-      
-
-
   function redraw(year) {
       circles.selectAll("circle")
       .transition()
@@ -240,6 +268,9 @@ function loadMap(dataFilePath){
       })
     }
   });
+  $('#recommendation-text').show();
 }
+
 </script>
+
 {% endblock %}

@@ -11,14 +11,9 @@
   }
 
   .subtitle-font{
-    font-family: "Nunito";
+    font-family: Lato;
     font-weight: bold;
-  }
-
-  .title-font{
-      font-family: "Shadows Into Light Two";
-      font-weight: bold;
-      color: #4d4d4d;
+    color: #4d4d4d;
   }
 
 </style>
@@ -28,9 +23,9 @@
 </nav>
 <div class="container" style="width:100%">
   <div class="row page-title">
-    <h3 class="title-font"> Best Nine on Flickr</h3>
+    <h3 class="title-font">Best Nine on Flickr</h3>
     <div class='action-button'>
-      <a id="word-match" class="btn btn-outline-dark" role="button" href="/tags-bubble?username1={{ username1 }}&username2={{ username2 }}&name1={{ name1 }}&name2={{ name2 }}"> Word Match </a>
+      <a id="word-match" class="btn btn-outline btn:hover" role="button" href="/tags-bubble?username1={{ username1 }}&username2={{ username2 }}&name1={{ name1 }}&name2={{ name2 }}"> Word Match </a>
     </div>
   </div>
 
@@ -82,7 +77,7 @@
 
     <div class="col-md-5">
       <div class="subtitle">
-        <h4>{{ name2 }}</h4>
+        <h4 class="subtitle-font">{{ name2 }}</h4>
       </div>
       {% if urls2|length < 9 %}
         <p> Have at least nine photos on Flickr for this game! </p>
