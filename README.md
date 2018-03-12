@@ -16,11 +16,19 @@ FlickrMatch is a web application to explore common interests between two Flickr 
 Users must have valid Flickr usernames and have uploaded at least nine public accessible photos to use app features. When users enter the usernames, the app will call Flickr API’s to find user id by username. If the response return the status as “fail”, or the user forgets to enter Flickr username, the app will display alert using AJAX. 
 ### Best Nine
 Once the user clicks “match”, the app will call Flickr API to get users’ photos information and store the data in the local database. It will display the most popular nine photos of each user, sorted by Flickr’s measure of “interesting”.
+<p align="center">
 <img src="static/bestnine.gif" width="417" height="258" />
+</p>
 ### Word Match and Recommendation
 Users can see word match bubble graphs that show the frequency of users’ words used in their photo tags, title, and description, and the match score accordingly. The visualization is implemented by D3. In the back end, I use Python’s pandas and nltk to process the text data so that only the meaningful words are counted and sorted. Based on the most frequently used photo tags and words in common, the app calls Flickr API to get photo recommendation. 
+<p align="center">
+<img src="static/wordmatch.gif" width="417" height="258" />
+</p>
 ### Path Match and Recommendation
 Users can also see a path match - the users’ photo counts based on geological information and timeline. Given the latitude and longitude of a photo, the app uses Python reverse-geocoder to get the country code, and then combines Google Map countries_code.csv and structures the data using pandas. It gives each user’s photo counts in each country of each year. The recommendation is based on the countries that both users have been to, otherwise it will give the top visited countries of each user.
+<p align="center">
+<img src="static/pathmatch.gif" width="417" height="258" />
+</p>
 ## Run FlickrMatch on your machine
 Clone or fork this repo:
 ```sh
