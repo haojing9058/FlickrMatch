@@ -16,6 +16,7 @@ FlickrMatch is a web application to explore common interests between two Flickr 
 Users must have valid Flickr usernames and have uploaded at least nine public accessible photos to use app features. When users enter the usernames, the app will call Flickr API’s to find user id by username. If the response return the status as “fail”, or the user forgets to enter Flickr username, the app will display alert using AJAX. 
 ### Best Nine
 Once the user clicks “match”, the app will call Flickr API to get users’ photos information and store the data in the local database. It will display the most popular nine photos of each user, sorted by Flickr’s measure of “interesting”.
+![Alt Text](static/bestnine.gif)
 ### Word Match and Recommendation
 Users can see word match bubble graphs that show the frequency of users’ words used in their photo tags, title, and description, and the match score accordingly. The visualization is implemented by D3. In the back end, I use Python’s pandas and nltk to process the text data so that only the meaningful words are counted and sorted. Based on the most frequently used photo tags and words in common, the app calls Flickr API to get photo recommendation. 
 ### Path Match and Recommendation
