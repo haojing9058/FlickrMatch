@@ -12,6 +12,7 @@ UNWANTED_WORDS = set(stopwords.words('english')).union(set(['facebook', 'instagr
             'please', 'page', 'visit', 'thanks', 'feel', 'like', 'ig', 'image', 'also', 'I', 'l', 'na', 'ba', 'ive', 'b', 'bplease', 'quotfquot', 'hessen', 'loch']))
 
 def strip_punctuation (str):
+    """Replace punctuation with empty space."""
     if not str:
         return str
     else:
@@ -19,8 +20,10 @@ def strip_punctuation (str):
             str = str.lower().replace(p, '')
     return str
 
+
 def users_word_count(username1, username2, text_type='tags'):
     """Return certain text_type of word counts for each user and their common word counts"""
+
     def count_word(username, text_type='tags'):
         """Return certain text_type of word counts dataframe for a given user.
         (string1, string2) --> dataframe
@@ -33,7 +36,6 @@ def users_word_count(username1, username2, text_type='tags'):
             raw_data = db.session.query(Photo.title).filter(Photo.username == username).all()
         elif text_type == 'description':
             raw_data = db.session.query(Photo.description).filter(Photo.username == username).all()
-        # what if user do not use tags??
         #get a list of strings
         str_lst = [e for l in raw_data for e in l]
         #lower case and strip punctuations of a string
@@ -89,17 +91,21 @@ def users_word_count(username1, username2, text_type='tags'):
 
     return df
 
+
 def get_tags_csv(df):
     """Save tags dataframe to .csv"""
     return df.to_csv(path_or_buf=r'static/tags.csv', header=False, index=False, encoding='utf-8')
+
 
 def get_title_csv(df):
     """Save title dataframe to .csv"""
     return df.to_csv(path_or_buf=r'static/title.csv', header=False, index=False, encoding='utf-8')
 
+
 def get_description_csv(df):
     """Save title dataframe to .csv"""
     return df.to_csv(path_or_buf=r'static/description.csv', header=False, index=False, encoding='utf-8')
+
 
 def get_match_score(df):
     """ Calculate match score given the "word, count, user" df.
@@ -111,6 +117,7 @@ def get_match_score(df):
         return '{0:.2f}%'.format(match_score*100)
     else: 
         return '0.00%'
+
 
 def get_tag_lst():
     """Return a list of tags used by both users.
@@ -126,6 +133,7 @@ def get_tag_lst():
         tag_lst = df_common['word'].tolist()
 
     return tag_lst
+
 
 def get_text_lst():
     """
@@ -145,12 +153,14 @@ def get_text_lst():
 
     return text_lst
 
+
+# globle variables for geo function.
 COUNTRY_CODE = pd.read_csv('static/countries_code.csv')
 COUNTRY_CODE.index = COUNTRY_CODE['country']
-# COUNTRY_CODE.drop(['country'], axis=1, inplace=True)
 TEMPLATE_DF = pd.DataFrame(columns=['latitude', 'longitude', 2010, 2011, 2012, 2013, 
     2014, 2015, 2016, 2017, 2018, 'country_name', 'user'])
 TEMPLATE_DF.index.name = 'country_code'
+
 
 def geo(username):
     #get a list of tuples
@@ -184,12 +194,16 @@ def geo(username):
     result.fillna(value=0, inplace=True)
     return result
 
+
 def get_geo_csv(df1, df2):
+    """save two dataframes into "geo.csv" """
     new = pd.concat([df1, df2], ignore_index=True)
     return new.to_csv(path_or_buf='static/geo.csv', encoding='utf-8')
 
 
 def get_lat_lon():
+    """Return the lat-lon lists of the countries the both users have visited,
+    or each individual user's top visited country."""
     df = pd.read_csv('static/geo.csv')
     df['total'] = df['2010'] + df['2011'] + df['2012'] + df['2013'] + df['2014'] + df['2015'] + df['2016'] + df['2017'] + df['2018']
 
@@ -213,10 +227,6 @@ def get_lat_lon():
     elif len(set(df['user'])) == 1:
         top_geo = df.sort_values(by='total', ascending=False).head(2)[['latitude', 'longitude']]
         return top_geo.values.tolist()
-
-    # else:
-    #     return 'fail'
-
 
 
 if __name__ == "__main__":

@@ -14,16 +14,15 @@ API_KEY = os.environ['API_KEY']
 API_URL = "https://api.flickr.com/services/rest"
 RESPONSE_FORMAT = 'json&nojsoncallback=1'
 
-# helper function for creating request
-def get_req_base():
-    return "%s?api_ky=%s&format=%s"%(API_URL, API_KEY, RESPONSE_FORMAT)
 
 def base_params():
+    """Helper function to get based parameters."""
     return {
             'api_key': API_KEY,
             'format': 'json',
             'nojsoncallback': '1',
         }
+
 
 def get_userid_by_username(username):
     """Get a user's user id given a username"""
@@ -78,10 +77,6 @@ def seed_photos_by_userid(user_id, sort='interesting', per_page=100):
                 country_code = None
             else:
                 country_code = rg.search((lat, lon))[0]['cc']
-            # if p.get('place_id'):
-            #     place_id = p['place_id'].encode('utf-8')
-            # else:
-            #     place_id = None
 
             photo = Photo(photo_id=photo_id, user_id=user_id, username=username,
             description=description, tags=tags, title=title, url=url, 
@@ -91,8 +86,7 @@ def seed_photos_by_userid(user_id, sort='interesting', per_page=100):
         else:
             pass
 
-# get recommendated photos based on text info
-# tags, tag_mode, text, sort, content_type=1, machine_tags, media='photo', per_page=et
+
 def recommendation_by_text(tags, text, per_page=36):
     """Get most relavent photos based on given text info(tags, title and description)
     tags: ata comma-delimited list of tags
@@ -103,12 +97,9 @@ def recommendation_by_text(tags, text, per_page=36):
     params['method'] = "flickr.photos.search"
     params['tags'] = tags
     params['tag_mode'] = 'any'
-    # params['text'] = text
     params['text'] = []
     params['sort'] = 'interestingness-desc'
     params['content_type'] = 1
-    # params['machine_tags']
-    # params['machine_tags_mode']
     params['media'] = 'photos'
     params['extras'] =','.join(['description','date_taken', 'owner_name', 'geo', 
         'tags', 'url_q'])
@@ -146,7 +137,6 @@ def recommendation_by_text(tags, text, per_page=36):
 
             db_utils.add_photo(photo)
 
-
         else:
             pass
 
@@ -166,8 +156,6 @@ def recommendation_by_geo(lat, lon, per_page=36):
     params['sort'] = 'interestingness-desc'
     params['content_type'] = 1
     params['accuracy'] = 3
-    # params['machine_tags']
-    # params['machine_tags_mode']
     params['extras'] =','.join(['description','date_taken', 'owner_name', 'geo', 
         'tags', 'url_q'])
     params['per_page'] = per_page
@@ -222,9 +210,9 @@ def user_pool(group_id):
 
     return response 
 
+
 if __name__ == "__main__":
     from flask import Flask
     app = Flask(__name__)
 
     connect_to_db(app)
-
