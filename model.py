@@ -1,13 +1,12 @@
-"""Models and database function for Flickrgram project"""
+"""Data modeling and database functions."""
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 app = Flask(__name__)
 
-
 class User(db.Model):
-    """User of the website"""
+    """users table"""
     __tablename__ = 'users'
 
     def __repr__(self):
@@ -19,7 +18,7 @@ class User(db.Model):
 
 
 class Photo(db.Model):
-    """Photo in the website """
+    """photos table"""
     __tablename__ = 'photos'
 
     photo_id = db.Column(db.String(20), primary_key=True)
@@ -38,9 +37,9 @@ class Photo(db.Model):
 
 
 def connect_to_db(app):
-    """Connect the database to our Flask app."""
+    """Connect the database to the Flask app."""
 
-    # Configure to use our database.
+    # Configure to use the database.
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres:///flickrmatch'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.app = app
@@ -48,10 +47,6 @@ def connect_to_db(app):
 
 
 if __name__ == "__main__":
-    # As a convenience, if we run this module interactively, it will leave
-    # you in a state of being able to work with the database directly.
-    # So that we can use Flask-SQLAlchemy, we'll make a Flask app.
-    # app = Flask(__name__)
 
     from server import app
     connect_to_db(app)

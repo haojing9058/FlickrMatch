@@ -1,3 +1,5 @@
+"""For requesting data from Flickr API"""
+
 import requests
 import json
 from pprint import pprint
@@ -9,7 +11,6 @@ from model import connect_to_db, db
 import db_utils
 
 
-# global variable
 API_KEY = os.environ['API_KEY']
 API_URL = "https://api.flickr.com/services/rest"
 RESPONSE_FORMAT = 'json&nojsoncallback=1'
@@ -25,7 +26,8 @@ def base_params():
 
 
 def get_userid_by_username(username):
-    """Get a user's user id given a username"""
+    """Get a user's user_id given a username"""
+
     if db.session.query(User).filter(User.username == username).first() is None:
         params_find_by_username = base_params()
         params_find_by_username['method'] = "flickr.people.findByUsername"
@@ -46,7 +48,7 @@ def get_userid_by_username(username):
 
 def seed_photos_by_userid(user_id, sort='interesting', per_page=100):
     """
-    Get photos given a user_id.
+    Seed a user's photos into database given a user_id.
     sort: faves, views, comments or interesting.
     per_page: The maximum value is 500.
     """
@@ -81,14 +83,15 @@ def seed_photos_by_userid(user_id, sort='interesting', per_page=100):
             photo = Photo(photo_id=photo_id, user_id=user_id, username=username,
             description=description, tags=tags, title=title, url=url, 
             date_taken=date_taken, lat=lat, lon=lon, country_code=country_code)
-            
+
             db_utils.add_photo(photo)
         else:
             pass
 
 
 def recommendation_by_text(tags, text, per_page=36):
-    """Get most relavent photos based on given text info(tags, title and description)
+    """
+    Get the most relavent photos based on given text info(tags, title and description)
     tags: ata comma-delimited list of tags
     text: list of words
     Add the photos into db if it's not in it, and return a list of photo_id.
@@ -142,9 +145,9 @@ def recommendation_by_text(tags, text, per_page=36):
 
     return photo_ids
 
-
 def recommendation_by_geo(lat, lon, per_page=36):
-    """Get most relavent photos based on given text info(tags, title and description)
+    """
+    Get most relavent photos based on given text info(tags, title and description)
     tags: a comma-delimited list of tags
     text: list of words
     Add the photos into db if it's not in it, and return a list of photo_id.

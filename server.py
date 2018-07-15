@@ -1,4 +1,5 @@
-from flask import Flask, render_template, redirect, request, session, jsonify
+
+from flask import Flask, render_template, request, session, jsonify
 from flask_debugtoolbar import DebugToolbarExtension
 from jinja2 import StrictUndefined
 from model import connect_to_db, db, User, Photo
@@ -10,6 +11,7 @@ app = Flask(__name__)
 app.secret_key = '\xf5\xf8\xb0t\x02\xdf\xd5\x7f\xbe1$P\xb4\xed\xfc k\xd4:\xa4\x96\x852h' 
 app.jinja_env.undefined = StrictUndefined
 
+
 @app.route('/', methods=['GET'])
 def index():
     """Homepage."""
@@ -18,7 +20,7 @@ def index():
 
 @app.route('/user-check', methods=['POST'])
 def check_username():
-    # """check if username valid from Flickr."""
+    #check if username valid from Flickr.
     username1 = request.form.get('username1')
     username2 = request.form.get('username2')
 
@@ -50,6 +52,7 @@ def display_userinfo():
     
     def helper(username):
         """helper function to get the top 9 photo"""
+
         #get user id from Flickr api
         user = request_api.get_userid_by_username(username)
         #get photo detail data from api and save to db
@@ -175,15 +178,10 @@ def display_recommendation_geo():
 
 
 if __name__ == "__main__":
-    # We have to set debug=True here, since it has to be True at the
-    # point that we invoke the DebugToolbarExtension
-    # app.debug = True
-    # make sure templates, etc. are not cached in debug mode
     app.jinja_env.auto_reload = app.debug
 
     connect_to_db(app)
 
-    # Use the DebugToolbar
     # DebugToolbarExtension(app)
 
     app.run(port=5000, host='0.0.0.0')
