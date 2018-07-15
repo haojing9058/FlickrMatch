@@ -1,3 +1,5 @@
+"""For cleaning and structuring data."""
+
 import pandas as pd
 import nltk
 from nltk.corpus import stopwords
@@ -10,6 +12,7 @@ from model import connect_to_db, db
 
 UNWANTED_WORDS = set(stopwords.words('english')).union(set(['facebook', 'instagram', 'thanks', 'follow', 'share', 'a7rm2',
             'please', 'page', 'visit', 'thanks', 'feel', 'like', 'ig', 'image', 'also', 'I', 'l', 'na', 'ba', 'ive', 'b', 'bplease', 'quotfquot', 'hessen', 'loch']))
+
 
 def strip_punctuation (str):
     """Replace punctuation with empty space."""
@@ -29,6 +32,7 @@ def users_word_count(username1, username2, text_type='tags'):
         (string1, string2) --> dataframe
         text_type: options of "tags", title", "description". Defalt to "tags".
         """
+
         #get a list of tutples of srtings
         if text_type == 'tags':
             raw_data = db.session.query(Photo.tags).filter(Photo.username == username).all()
@@ -36,25 +40,34 @@ def users_word_count(username1, username2, text_type='tags'):
             raw_data = db.session.query(Photo.title).filter(Photo.username == username).all()
         elif text_type == 'description':
             raw_data = db.session.query(Photo.description).filter(Photo.username == username).all()
+
         #get a list of strings
         str_lst = [e for l in raw_data for e in l]
+
         #lower case and strip punctuations of a string
         str_lst_new = map(strip_punctuation, str_lst)
 
         word_lst = [w for sentence in str_lst_new if sentence for w in sentence.split()]
         if word_lst:
+
             #remove stop words
             filtered_words = [w for w in word_lst if not w in UNWANTED_WORDS]
+
             #get word count dictionary
             counts = Counter(filtered_words)
+
             #convert dict to dataframe
             df = pd.DataFrame.from_dict(counts, orient='index').reset_index()
+
             #add "user" column to the dataframe
             df['user'] = pd.Series(username, index=df.index)
+
             #rename columns
             df.rename(columns={'index':'word', 0:'count', 'user':'user'}, inplace=True)
+
             #drop rows if word length is over 15
             df = df[df['word'].apply(lambda x: len(x) < 15)]
+            
             #sort and select top 20
             df_new = df.sort_values(by='count',ascending = False).head(20)
 
